@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Lịch sử Đảng - Chương 1</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; color: #333; }
+        h2 { text-align: center; color: #d9534f; }
+        .quiz-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .question-box { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .question-text { font-weight: bold; margin-bottom: 10px; font-size: 16px; }
+        .option-label { display: block; margin: 8px 0; padding: 10px; background: #fdfdfd; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { background: #f0f8ff; border-color: #007bff; }
+        .option-label input { margin-right: 10px; cursor: pointer; }
+        .btn-submit { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-submit:hover { background: #218838; }
+        #result { margin-top: 20px; text-align: center; font-size: 22px; font-weight: bold; color: #d9534f; }
+        .correct { background: #d4edda !important; border-color: #c3e6cb !important; color: #155724; font-weight: bold; }
+        .wrong { background: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+
+    <h2>Ôn tập Lịch sử Đảng - Chương 1</h2>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button class="btn-submit" onclick="checkAnswers()">Nộp bài & Xem điểm</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "Câu 1. Mục đích chủ yếu của thực dân Pháp khi tiến hành cuộc khai thác thuộc địa lần thứ hai (1919 - 1929) ở Việt Nam là gì?",
+                options: [
+                    "A. Biến Việt Nam thành thị trường tiêu thụ hàng hóa duy nhất.",
+                    "B. Khôi phục lại quyền thống trị sau khi bị phát xít Nhật đảo chính.",
+                    "C. Bù đắp những thiệt hại do Chiến tranh thế giới thứ nhất gây ra.",
+                    "D. Tạo nền tảng công nghiệp nặng vững chắc cho nền kinh tế thuộc địa."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 2. Dưới sự thống trị của thực dân Pháp, chính sách chuyên chế triệt để về chính trị ở Việt Nam được biểu hiện chủ yếu như thế nào?",
+                options: [
+                    "A. Chia Việt Nam thành ba kỳ với ba chế độ cai trị khác nhau.",
+                    "B. Mọi quyền hành đều thâu tóm trong tay viên Toàn quyền Đông Dương.",
+                    "C. Cho phép thành lập các đảng phái chính trị hoạt động công khai.",
+                    "D. Cử quan lại người Việt lên nắm các chức vụ chủ chốt trong bộ máy."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 3. Những giai cấp cơ bản nào đã tồn tại trong xã hội Việt Nam từ TRƯỚC cuộc khai thác thuộc địa của thực dân Pháp?",
+                options: [
+                    "A. Giai cấp công nhân và nông dân.",
+                    "B. Địa chủ phong kiến và tư sản dân tộc.",
+                    "C. Địa chủ phong kiến và nông dân.",
+                    "D. Nông dân, địa chủ và tiểu tư sản."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 4. Trong xã hội Việt Nam thuộc địa nửa phong kiến, bộ phận giai cấp nào KHÔNG có tinh thần dân tộc và là thế lực tay sai đắc lực cho đế quốc?",
+                options: [
+                    "A. Đại địa chủ và tư sản mại bản.",
+                    "B. Tư sản dân tộc và trung địa chủ.",
+                    "C. Trung nông và tầng lớp tiểu tư sản.",
+                    "D. Tư sản mại bản và công nhân."
+                ],
+                correct: 0
+            },
+            {
+                q: "Câu 5. Sau Chiến tranh thế giới thứ nhất, sự kiện lịch sử thế giới nào đã tác động mạnh mẽ nhất đến con đường cứu nước của cách mạng Việt Nam?",
+                options: [
+                    "A. Chiến tranh thế giới thứ hai bùng nổ.",
+                    "B. Cách mạng Tân Hợi (Trung Quốc) thành công.",
+                    "C. Sự ra đời của tổ chức Liên hợp quốc.",
+                    "D. Cách mạng tháng Mười Nga thành công (1917)."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 6. Giai cấp công nhân Việt Nam ra đời trong cuộc khai thác thuộc địa của thực dân Pháp có xuất thân chủ yếu từ bộ phận nào?",
+                options: [
+                    "A. Thợ thủ công bị phá sản.",
+                    "B. Giai cấp nông dân bị tước đoạt ruộng đất.",
+                    "C. Tầng lớp tiểu tư sản trí thức.",
+                    "D. Tư sản dân tộc bị tư bản Pháp chèn ép."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 7. Đâu là mâu thuẫn CHỦ YẾU NHẤT của xã hội Việt Nam sau Chiến tranh thế giới thứ nhất?",
+                options: [
+                    "A. Mâu thuẫn giữa giai cấp công nhân và giai cấp tư sản.",
+                    "B. Mâu thuẫn giữa giai cấp nông dân và địa chủ phong kiến.",
+                    "C. Mâu thuẫn giữa tư sản dân tộc và tư sản mại bản.",
+                    "D. Mâu thuẫn giữa toàn thể dân tộc Việt Nam với thực dân Pháp xâm lược."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 8. Sau khi thực dân Pháp xâm lược và đặt ách thống trị, tính chất xã hội Việt Nam đã có sự chuyển biến căn bản như thế nào?",
+                options: [
+                    "A. Từ xã hội phong kiến sang xã hội tư bản chủ nghĩa.",
+                    "B. Từ xã hội phong kiến độc lập thành xã hội thuộc địa nửa phong kiến.",
+                    "C. Từ xã hội nửa phong kiến thành xã hội xã hội chủ nghĩa.",
+                    "D. Từ quốc gia phong kiến trở thành quốc gia lệ thuộc hoàn toàn."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 9. Lực lượng nào trong xã hội Việt Nam có tinh thần cách mạng triệt để nhất, có ý thức tổ chức kỷ luật và có mối liên hệ mật thiết tự nhiên với giai cấp nông dân?",
+                options: [
+                    "A. Tầng lớp tiểu tư sản trí thức.",
+                    "B. Giai cấp tư sản dân tộc.",
+                    "C. Giai cấp công nhân.",
+                    "D. Giai cấp nông dân."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 10. Dưới tác động của cuộc khai thác thuộc địa lần thứ hai của thực dân Pháp, giai cấp công nhân Việt Nam đã có sự chuyển biến như thế nào?",
+                options: [
+                    "A. Trở thành giai cấp lãnh đạo duy nhất của cách mạng ngay lập tức.",
+                    "B. Bị phân hóa sâu sắc thành nhiều bộ phận có quyền lợi đối lập nhau.",
+                    "C. Chỉ tăng nhanh về số lượng nhưng hoàn toàn chưa có ý thức chính trị.",
+                    "D. Tăng nhanh về số lượng và bước đầu được nâng cao về chất lượng."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 11. Bản Yêu sách của nhân dân An Nam do Nguyễn Ái Quốc gửi đến Hội nghị Véc-xai (1919) chủ yếu đòi hỏi những quyền gì cho dân tộc?",
+                options: [
+                    "A. Đòi quyền độc lập dân tộc hoàn toàn và tức khắc.",
+                    "B. Đòi quyền tự quyết dân tộc và xóa bỏ chế độ thuộc địa.",
+                    "C. Đòi các quyền tự do, dân chủ, bình đẳng và tôn trọng dân tộc.",
+                    "D. Đòi thực dân Pháp phải rút toàn bộ quân đội khỏi Đông Dương."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 12. Những hoạt động của Nguyễn Ái Quốc trong giai đoạn 1919 - 1925 có vai trò nền tảng như thế nào đối với cách mạng Việt Nam?",
+                options: [
+                    "A. Trực tiếp lãnh đạo phong trào đấu tranh vũ trang của công nhân.",
+                    "B. Chuẩn bị về tư tưởng, chính trị và tổ chức cho sự ra đời của Đảng.",
+                    "C. Thống nhất các tổ chức yêu nước thành một mặt trận duy nhất.",
+                    "D. Phát động cao trào cách mạng giải phóng dân tộc trên toàn quốc."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 13. Nội dung cốt lõi mà Nguyễn Ái Quốc tuyên truyền, huấn luyện cho thanh niên Việt Nam tại Quảng Châu (Trung Quốc) là gì?",
+                options: [
+                    "A. Truyền bá Chủ nghĩa Mác - Lênin và lý luận giải phóng dân tộc.",
+                    "B. Tuyên truyền tư tưởng dân chủ tư sản và bạo động vũ trang.",
+                    "C. Vận động thanh niên sang Pháp du học để mở mang dân trí.",
+                    "D. Tổ chức các cuộc ám sát nhắm vào quan chức thực dân Pháp."
+                ],
+                correct: 0
+            },
+            {
+                q: "Câu 14. Hoạt động nào của Hội Việt Nam Cách mạng Thanh niên gắn bó mật thiết nhất với vai trò trực tiếp của Nguyễn Ái Quốc?",
+                options: [
+                    "A. Lãnh đạo cuộc bãi công của thợ máy xưởng Ba Son.",
+                    "B. Thành lập Mặt trận Dân chủ Đông Dương để đấu tranh công khai.",
+                    "C. Mở lớp huấn luyện đào tạo cán bộ và xuất bản báo Thanh niên.",
+                    "D. Trực tiếp chỉ đạo cuộc khởi nghĩa vũ trang Yên Bái."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 15. Tổ chức cách mạng nào dưới đây được xem là tổ chức tiền thân của Đảng Cộng sản Việt Nam?",
+                options: [
+                    "A. Tâm tâm xã.",
+                    "B. Tân Việt Cách mạng Đảng.",
+                    "C. Việt Nam Quốc dân Đảng.",
+                    "D. Hội Việt Nam Cách mạng Thanh niên."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 16. Cơ quan ngôn luận của Hội Việt Nam Cách mạng Thanh niên là tờ báo nào?",
+                options: [
+                    "A. Báo Búa liềm.",
+                    "B. Báo Thanh niên.",
+                    "C. Báo Đỏ.",
+                    "D. Báo Nhành lúa."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 17. Quá trình phân hóa của Hội Việt Nam Cách mạng Thanh niên trong năm 1929 đã trực tiếp dẫn đến sự thành lập các tổ chức cộng sản nào?",
+                options: [
+                    "A. Đông Dương Cộng sản đảng và An Nam Cộng sản đảng.",
+                    "B. An Nam Cộng sản đảng và Đông Dương Cộng sản liên đoàn.",
+                    "C. Đông Dương Cộng sản đảng và Đông Dương Cộng sản liên đoàn.",
+                    "D. Cả ba tổ chức: Đông Dương CSĐ, An Nam CSĐ và Đông Dương CSLĐ."
+                ],
+                correct: 0
+            },
+            {
+                q: "Câu 18. Tổ chức Cộng sản nào ra đời sớm nhất ở khu vực miền Bắc Việt Nam (tháng 6/1929)?",
+                options: [
+                    "A. Đông Dương Cộng sản liên đoàn.",
+                    "B. Đông Dương Cộng sản đảng.",
+                    "C. An Nam Cộng sản đảng.",
+                    "D. Đảng Cộng sản Đông Dương."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 19. Một trong những điểm khác biệt căn bản giữa Cương lĩnh chính trị (2/1930) và Luận cương chính trị (10/1930) là gì?",
+                options: [
+                    "A. Cương lĩnh đặt nhiệm vụ chống phong kiến lên hàng đầu.",
+                    "B. Luận cương đặt nhiệm vụ chống đế quốc lên vị trí hàng đầu.",
+                    "C. Cương lĩnh đặt nhiệm vụ chống đế quốc lên vị trí hàng đầu.",
+                    "D. Cả hai văn kiện đều xác định cách mạng ruộng đất là trọng tâm."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 20. Theo Cương lĩnh chính trị đầu tiên do Nguyễn Ái Quốc khởi thảo, lực lượng để đánh đổ đế quốc và phong kiến bao gồm những ai?",
+                options: [
+                    "A. Chỉ dựa vào hai giai cấp nòng cốt là công nhân và nông dân.",
+                    "B. Công nhân, nông dân, tiểu tư sản trí thức; lôi kéo hoặc trung lập các giai cấp khác.",
+                    "C. Liên minh chặt chẽ giữa tư sản dân tộc, đại địa chủ và nông dân.",
+                    "D. Tập hợp chủ yếu tầng lớp trí thức, học sinh, sinh viên và tiểu tư sản."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 21. Văn kiện nào của Đảng trong năm 1930 đã đặt nhiệm vụ chống đế quốc (giải phóng dân tộc) lên hàng đầu?",
+                options: [
+                    "A. Luận cương chính trị (tháng 10/1930).",
+                    "B. Tác phẩm Đường Kách mệnh.",
+                    "C. Bản án chế độ thực dân Pháp.",
+                    "D. Cương lĩnh chính trị đầu tiên (Chính cương, Sách lược vắn tắt)."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 22. Sự kiện nào vào tháng 6/1925 đã tạo ra bước chuyển biến về chất đối với phong trào cách mạng Việt Nam theo khuynh hướng vô sản?",
+                options: [
+                    "A. Cuộc bãi công của thợ máy xưởng Ba Son.",
+                    "B. Sự kiện Phạm Hồng Thái mưu sát Toàn quyền Méc-lanh.",
+                    "C. Sự ra đời của Hội Việt Nam Cách mạng Thanh niên.",
+                    "D. Thành lập tổ chức cộng sản đầu tiên tại Hà Nội."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 23. Từ ngày 6-1 đến ngày 7-2-1930, Hội nghị hợp nhất các tổ chức cộng sản đã diễn ra tại đâu?",
+                options: [
+                    "A. Ma Cao (Trung Quốc).",
+                    "B. Quảng Châu (Trung Quốc).",
+                    "C. Thượng Hải (Trung Quốc).",
+                    "D. Hương Cảng (Trung Quốc)."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 24. Vì sao vào cuối năm 1929, vấn đề thống nhất các tổ chức cộng sản lại trở nên cấp thiết đối với cách mạng Việt Nam?",
+                options: [
+                    "A. Do yêu cầu trực tiếp từ Chính phủ Liên Xô.",
+                    "B. Do sự công kích, chia rẽ lẫn nhau giữa các tổ chức cộng sản trong nước.",
+                    "C. Do thực dân Pháp đang chuẩn bị tiến hành khủng bố trắng quy mô lớn.",
+                    "D. Do phong trào công nhân trong nước đang có dấu hiệu thoái trào."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 25. Sự tồn tại song song của ba tổ chức cộng sản ở Việt Nam vào cuối năm 1929 bộc lộ hạn chế lớn nhất là gì?",
+                options: [
+                    "A. Thiếu một đường lối chính trị rõ ràng và đúng đắn.",
+                    "B. Không nhận được sự ủng hộ và bảo vệ của quần chúng nhân dân.",
+                    "C. Nội bộ những người cộng sản chia rẽ, ngăn cản sự phát triển của phong trào.",
+                    "D. Không thiết lập được mối liên hệ với Quốc tế Cộng sản."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 26. Tại Hội nghị hợp nhất đầu năm 1930 (do Nguyễn Ái Quốc chủ trì), có sự tham gia chính thức của các tổ chức cộng sản nào?",
+                options: [
+                    "A. An Nam Cộng sản đảng và Đông Dương Cộng sản liên đoàn.",
+                    "B. Đông Dương Cộng sản đảng và Đông Dương Cộng sản liên đoàn.",
+                    "C. Đông Dương Cộng sản đảng và An Nam Cộng sản đảng.",
+                    "D. Cả ba tổ chức cộng sản ở ba miền Bắc - Trung - Nam."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 27. Vai trò quan trọng nhất của Nguyễn Ái Quốc trong Hội nghị hợp nhất các tổ chức cộng sản là gì?",
+                options: [
+                    "A. Bầu ra Ban Chấp hành Trung ương chính thức của Đảng.",
+                    "B. Phát động phong trào đấu tranh rộng lớn trên toàn quốc.",
+                    "C. Chuyển hướng chỉ đạo chiến lược cách mạng sang đấu tranh vũ trang.",
+                    "D. Thống nhất các tổ chức cộng sản và soạn thảo Cương lĩnh chính trị đầu tiên."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 28. Vì sao sự ra đời của Đảng Cộng sản Việt Nam (1930) được đánh giá là bước ngoặt vĩ đại của cách mạng Việt Nam?",
+                options: [
+                    "A. Đã đánh đổ hoàn toàn ách thống trị của thực dân Pháp và tay sai.",
+                    "B. Chấm dứt tình trạng khủng hoảng về đường lối cứu nước và giai cấp lãnh đạo.",
+                    "C. Đưa giai cấp công nhân và nông dân lên nắm chính quyền trên cả nước.",
+                    "D. Hoàn thành triệt để cuộc cách mạng ruộng đất, chia 'người cày có ruộng'."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 29. Sự ra đời của Đảng Cộng sản Việt Nam là kết quả của sự kết hợp giữa những yếu tố cơ bản nào?",
+                options: [
+                    "A. Chủ nghĩa Mác - Lênin với phong trào công nhân.",
+                    "B. Chủ nghĩa Mác - Lênin với phong trào yêu nước.",
+                    "C. Chủ nghĩa Mác - Lênin, phong trào công nhân và phong trào yêu nước.",
+                    "D. Phong trào công nhân và phong trào đấu tranh của tư sản dân tộc."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 30. Tại Hội nghị Ban Chấp hành Trung ương lần thứ nhất (10/1930), nội dung cơ bản nào đã được thông qua?",
+                options: [
+                    "A. Thông qua Cương lĩnh chính trị đầu tiên của Đảng.",
+                    "B. Bầu đồng chí Nguyễn Ái Quốc làm Tổng Bí thư.",
+                    "C. Thông qua Luận cương chính trị và đổi tên thành Đảng Cộng sản Đông Dương.",
+                    "D. Phát động cao trào cách mạng rộng lớn trong những năm 1930 - 1931."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 31. Đại hội lần thứ VII (tháng 7/1935) của Quốc tế Cộng sản đã đề ra chủ trương chiến lược gì?",
+                options: [
+                    "A. Phát động khởi nghĩa vũ trang trên phạm vi toàn thế giới.",
+                    "B. Thành lập Mặt trận nhân dân thống nhất chống phát xít ở mỗi nước.",
+                    "C. Đẩy mạnh cách mạng giải phóng dân tộc ở khu vực châu Á.",
+                    "D. Tiêu diệt triệt để chủ nghĩa tư bản độc quyền."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 32. Văn kiện Luận cương chính trị tháng 10/1930 của Đảng Cộng sản Đông Dương do ai trực tiếp soạn thảo?",
+                options: [
+                    "A. Nguyễn Ái Quốc.",
+                    "B. Lê Hồng Phong.",
+                    "C. Trần Phú.",
+                    "D. Hà Huy Tập."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 33. Những lực lượng cơ bản nào được xác định là động lực của cách mạng trong Luận cương chính trị tháng 10/1930?",
+                options: [
+                    "A. Công nhân, nông dân và tiểu tư sản.",
+                    "B. Giai cấp công nhân và nông dân.",
+                    "C. Công nhân, nông dân và tư sản dân tộc.",
+                    "D. Toàn thể các giai cấp, tầng lớp bị áp bức."
+                ],
+                correct: 1
+            },
+            {
+                q: "Câu 34. Hạn chế lớn nhất trong Luận cương chính trị tháng 10/1930 là đã xem nhẹ vấn đề nào?",
+                options: [
+                    "A. Vai trò lãnh đạo của Đảng Cộng sản.",
+                    "B. Nhiệm vụ đấu tranh giai cấp và cách mạng ruộng đất.",
+                    "C. Khả năng cách mạng của giai cấp công nhân.",
+                    "D. Nhiệm vụ giải phóng dân tộc và vai trò của các tầng lớp khác."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 35. Ai là người trước lúc hy sinh đã căn dặn các đồng chí của mình: 'Hãy giữ vững chí khí chiến đấu'?",
+                options: [
+                    "A. Nguyễn Văn Cừ.",
+                    "B. Ngô Gia Tự.",
+                    "C. Lê Hồng Phong.",
+                    "D. Trần Phú."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 36. Ai là tác giả của tác phẩm 'Tự chỉ trích' (xuất bản năm 1939) nhằm đấu tranh bảo vệ đường lối của Đảng?",
+                options: [
+                    "A. Lê Duẩn.",
+                    "B. Trường Chinh.",
+                    "C. Nguyễn Văn Cừ.",
+                    "D. Phan Đăng Lưu."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 37. Trong phong trào cách mạng 1930 - 1931, dưới sự lãnh đạo của Đảng, nhân dân ta đã giành được chính quyền (cấp cơ sở) lần đầu tiên ở đâu?",
+                options: [
+                    "A. Bắc Sơn - Võ Nhai.",
+                    "B. Nam Kỳ.",
+                    "C. Ba Tơ.",
+                    "D. Xô Viết Nghệ - Tĩnh."
+                ],
+                correct: 3
+            },
+            {
+                q: "Câu 38. Nguyên nhân trực tiếp dẫn đến sự xuất hiện của chủ nghĩa phát xít trên thế giới là gì?",
+                options: [
+                    "A. Cuộc khủng hoảng kinh tế thế giới (1929 - 1933).",
+                    "B. Hậu quả của cuộc Chiến tranh thế giới thứ nhất.",
+                    "C. Cao trào cách mạng thế giới dâng cao (1918 - 1923).",
+                    "D. Sự ra đời và lớn mạnh của nhà nước Liên Xô."
+                ],
+                correct: 0
+            },
+            {
+                q: "Câu 39. Đại hội thứ VII của Quốc tế Cộng sản (7/1935) xác định kẻ thù nguy hiểm trước mắt của nhân dân lao động thế giới lúc này là?",
+                options: [
+                    "A. Chủ nghĩa đế quốc Pháp và Mỹ.",
+                    "B. Chủ nghĩa tư bản độc quyền.",
+                    "C. Chủ nghĩa phát xít.",
+                    "D. Các thế lực phong kiến quân phiệt."
+                ],
+                correct: 2
+            },
+            {
+                q: "Câu 40. Mục đích trọng tâm trong 'Chương trình hành động' do Đảng ta đề ra năm 1932 là gì?",
+                options: [
+                    "A. Lật đổ trực tiếp chính quyền thực dân Pháp ở Đông Dương.",
+                    "B. Khôi phục phong trào quần chúng và hệ thống tổ chức Đảng.",
+                    "C. Phát động cuộc khởi nghĩa vũ trang từng phần.",
+                    "D. Thành lập Mặt trận Dân chủ Đông Dương để đấu tranh nghị trường."
+                ],
+                correct: 1
+            },
+            // Bắt đầu copy từ đây (Câu 41 - 70)
+            {
+            q: "Câu 41. Tại Đại hội đại biểu toàn quốc lần thứ nhất của Đảng Cộng sản Đông Dương (tháng 3/1935) KHÔNG nêu lên vấn đề gì?",
+            options: [
+                "A. Củng cố và phát triển hệ thống tổ chức Đảng.",
+                "B. Thu phục đông đảo quần chúng công nhân, nông dân.",
+                "C. Chuyển hướng đặt nhiệm vụ giải phóng dân tộc lên hàng đầu.",
+                "D. Đấu tranh chống chiến tranh đế quốc."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 42. Hình thức tổ chức và đấu tranh của cách mạng Việt Nam trong giai đoạn 1936 – 1939 là gì?",
+            options: [
+                "A. Đấu tranh vũ trang kết hợp với đấu tranh chính trị.",
+                "B. Kết hợp công khai và bí mật, hợp pháp và bất hợp pháp.",
+                "C. Hoàn toàn đấu tranh bí mật và bất hợp pháp.",
+                "D. Chủ yếu là đấu tranh nghị trường và báo chí công khai."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 43. Trong cao trào dân chủ 1936 - 1939, Đảng ta chủ trương thành lập tổ chức gì để tập hợp rộng rãi lực lượng cho cách mạng Việt Nam?",
+            options: [
+                "A. Mặt trận Dân tộc giải phóng miền Nam Việt Nam.",
+                "B. Mặt trận Tổ quốc Việt Nam.",
+                "C. Mặt trận Việt Nam độc lập đồng minh (Việt Minh).",
+                "D. Mặt trận Thống nhất nhân dân phản đế / Mặt trận Dân chủ Đông Dương."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 44. Nhận thức mới của Đảng ta về mối quan hệ giữa các nhiệm vụ chiến lược trong văn kiện “Chung quanh vấn đề chiến lược mới” (10/1936) là gì?",
+            options: [
+                "A. Nhiệm vụ chống đế quốc và chống phong kiến phải tiến hành đồng thời.",
+                "B. Giải phóng dân tộc không nhất thiết phải kết chặt với cách mạng điền địa.",
+                "C. Phải hoàn thành cách mạng điền địa rồi mới tiến hành giải phóng dân tộc.",
+                "D. Từ bỏ hoàn toàn nhiệm vụ đấu tranh giai cấp và cách mạng ruộng đất."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 45. Cuộc khởi nghĩa nào sau đây KHÔNG diễn ra trong giai đoạn 1939 – 1941?",
+            options: [
+                "A. Khởi nghĩa Bắc Sơn.",
+                "B. Binh biến Đô Lương.",
+                "C. Khởi nghĩa Yên Bái.",
+                "D. Khởi nghĩa Nam Kỳ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 46. Tình cảnh “một cổ hai tròng” là để chỉ sự áp bức của những kẻ thù nào đối với nhân dân Việt Nam từ mùa thu năm 1940 đến trước Cách mạng tháng Tám?",
+            options: [
+                "A. Thực dân Pháp và phong kiến tay sai.",
+                "B. Phát xít Nhật và đế quốc Mỹ.",
+                "C. Thực dân Pháp và tư sản mại bản.",
+                "D. Thực dân Pháp và phát xít Nhật."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 47. Nội dung nổi bật nhất trong chủ trương chuyển hướng chỉ đạo chiến lược cách mạng của Đảng qua 3 Hội nghị Trung ương (11/1939, 11/1940 và 5/1941) là gì?",
+            options: [
+                "A. Đặt nhiệm vụ giải phóng dân tộc lên hàng đầu.",
+                "B. Đặt nhiệm vụ cách mạng ruộng đất lên vị trí số một.",
+                "C. Tranh thủ sự ủng hộ của phe Đồng minh.",
+                "D. Chuyển sang đấu tranh vũ trang trên toàn quốc."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 48. Hội nghị Ban Chấp hành Trung ương Đảng lần thứ sáu (11/1939) đã diễn ra tại địa điểm nào?",
+            options: [
+                "A. Tân Trào (Tuyên Quang).",
+                "B. Pác Bó (Cao Bằng).",
+                "C. Bà Điểm (Hóc Môn, Gia Định).",
+                "D. Ma Cao (Trung Quốc)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 49. Ai là người trực tiếp chủ trì Hội nghị Ban Chấp hành Trung ương Đảng lần thứ sáu (11/1939)?",
+            options: [
+                "A. Tổng Bí thư Trần Phú.",
+                "B. Lãnh tụ Nguyễn Ái Quốc.",
+                "C. Tổng Bí thư Lê Hồng Phong.",
+                "D. Tổng Bí thư Nguyễn Văn Cừ."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 50. Hội nghị Ban Chấp hành Trung ương lần thứ bảy (11/1940) đã thông qua một quyết định rất quan trọng liên quan đến phong trào cách mạng miền Nam, đó là gì?",
+            options: [
+                "A. Lệnh hoãn cuộc khởi nghĩa Nam Kỳ.",
+                "B. Quyết định phát động khởi nghĩa Nam Kỳ lập tức.",
+                "C. Rút toàn bộ cán bộ chủ chốt khỏi Nam Kỳ.",
+                "D. Thành lập Xứ ủy Nam Kỳ mới."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 51. Chủ trương thành lập Mặt trận Việt Minh (1941) của Đảng nhằm mục đích cốt lõi gì?",
+            options: [
+                "A. Thành lập chính quyền công nông binh ở các vùng căn cứ địa.",
+                "B. Chuẩn bị tham gia cuộc Chiến tranh thế giới thứ hai.",
+                "C. Tập hợp, đoàn kết rộng rãi mọi tầng lớp nhân dân để giải phóng dân tộc.",
+                "D. Loại bỏ các đảng phái quốc gia ra khỏi phong trào cách mạng."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 52. Hội nghị Trung ương 8 (5/1941) đã xác định hình thức nhà nước sau khi đánh đuổi được đế quốc Pháp - Nhật là gì?",
+            options: [
+                "A. Nhà nước công nông binh.",
+                "B. Nhà nước Việt Nam Dân chủ Cộng hòa.",
+                "C. Nhà nước quân chủ lập hiến.",
+                "D. Nhà nước Cộng hòa xã hội chủ nghĩa Việt Nam."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 53. Tại Hội nghị Ban Chấp hành Trung ương lần thứ Tám (5/1941), ai đã được bầu giữ chức Tổng Bí thư của Đảng?",
+            options: [
+                "A. Đồng chí Trường Chinh.",
+                "B. Đồng chí Lê Duẩn.",
+                "C. Đồng chí Nguyễn Văn Cừ.",
+                "D. Đồng chí Phạm Văn Đồng."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 54. Lãnh tụ Hồ Chí Minh đã giao nhiệm vụ thành lập Đội Việt Nam Tuyên truyền Giải phóng quân (12/1944) cho ai?",
+            options: [
+                "A. Đồng chí Phùng Chí Kiên.",
+                "B. Đồng chí Phạm Văn Đồng.",
+                "C. Đồng chí Chu Văn Tấn.",
+                "D. Đồng chí Võ Nguyên Giáp."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 55. Nguyên nhân trực tiếp nào khiến Đảng ta kịp thời đề ra bản Chỉ thị “Nhật - Pháp bắn nhau và hành động của chúng ta” (12/3/1945)?",
+            options: [
+                "A. Phát xít Nhật đầu hàng Đồng minh không điều kiện.",
+                "B. Quân Đồng minh chuẩn bị đổ bộ vào Đông Dương.",
+                "C. Sự kiện Nhật làm đảo chính lật đổ Pháp độc chiếm Đông Dương.",
+                "D. Quân Pháp mở cuộc tấn công lớn vào căn cứ địa Việt Bắc."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 56. Ngay trong đêm phát xít Nhật đảo chính lật đổ thực dân Pháp (9/3/1945), Ban Thường vụ Trung ương Đảng đã họp và sau đó ban hành văn kiện nào?",
+            options: [
+                "A. Lời kêu gọi toàn quốc kháng chiến.",
+                "B. Chỉ thị 'Nhật - Pháp bắn nhau và hành động của chúng ta'.",
+                "C. Bản Quân lệnh số 1 của Ủy ban khởi nghĩa toàn quốc.",
+                "D. Tác phẩm Kháng chiến nhất định thắng lợi."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 57. Trong Chỉ thị “Nhật – Pháp bắn nhau và hành động của chúng ta”, Đảng ta xác định kẻ thù chính, cụ thể trước mắt của nhân dân Đông Dương là ai?",
+            options: [
+                "A. Thực dân Pháp và phong kiến tay sai.",
+                "B. Cả thực dân Pháp và phát xít Nhật.",
+                "C. Phát xít Nhật.",
+                "D. Quân đội Tưởng Giới Thạch."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 58. Phát xít Nhật tiến hành cuộc đảo chính lật đổ chính quyền thực dân Pháp ở Đông Dương (9/3/1945) nhằm mục đích gì?",
+            options: [
+                "A. Trả thù quân Pháp vì đã không hợp tác kinh tế.",
+                "B. Trao trả lại nền độc lập hoàn toàn cho nhân dân Việt Nam.",
+                "C. Chuẩn bị đưa quân sang xâm lược khu vực Nam Á.",
+                "D. Độc chiếm Đông Dương để rảnh tay đối phó với quân Đồng minh."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 59. Trong Chỉ thị “Nhật – Pháp bắn nhau và hành động của chúng ta”, Đảng ta đã đề ra phương châm đấu tranh như thế nào?",
+            options: [
+                "A. Phát động chiến tranh du kích, tiến hành khởi nghĩa từng phần.",
+                "B. Đấu tranh chính trị hòa bình đòi Nhật rút quân.",
+                "C. Phát động ngay Tổng khởi nghĩa trên phạm vi cả nước.",
+                "D. Đợi quân Đồng minh vào mới bắt đầu khởi nghĩa."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 60. Để giải quyết nạn đói trước mắt cho người dân đầu năm 1945, Đảng ta đã quyết định phát động phong trào đấu tranh gì làm tiền đề mạnh mẽ cho Tổng khởi nghĩa?",
+            options: [
+                "A. Chia lại ruộng công cho dân nghèo cày cấy.",
+                "B. Phong trào 'Phá kho thóc, giải quyết nạn đói'.",
+                "C. Giảm địa tô, giảm lợi tức và hoãn nợ.",
+                "D. Kêu gọi nhân dân tăng gia sản xuất lương thực."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 61. Tại Hội nghị toàn quốc họp ở Tân Trào (13-15/8/1945), Đảng ta đã đề ra 3 nguyên tắc chỉ đạo cuộc Tổng khởi nghĩa tháng Tám là gì?",
+            options: [
+                "A. Tập trung, thống nhất, kịp thời.",
+                "B. Chủ động, linh hoạt, sáng tạo.",
+                "C. Dũng cảm, táo bạo, chắc thắng.",
+                "D. Toàn dân, toàn diện, trường kỳ."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 62. Thời cơ chín muồi của Cách mạng tháng Tám năm 1945 xuất hiện trong khoảng thời gian nào?",
+            options: [
+                "A. Ngay sau khi Nhật đảo chính lật đổ Pháp (9/3/1945).",
+                "B. Từ sau khi Nhật đầu hàng Đồng minh đến trước khi quân Đồng minh vào Đông Dương.",
+                "C. Khi quân đội Đồng minh vừa tiến vào tước khí giới quân Nhật ở Đông Dương.",
+                "D. Khi thực dân Pháp quay trở lại xâm lược Nam Bộ (9/1945)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 63. Phương pháp đấu tranh cơ bản trong Cách mạng tháng Tám năm 1945 là gì?",
+            options: [
+                "A. Chỉ sử dụng lực lượng chính trị đấu tranh hòa bình.",
+                "B. Chỉ sử dụng lực lượng vũ trang tiến công các đô thị lớn.",
+                "C. Kết hợp đấu tranh vũ trang với đấu tranh ngoại giao.",
+                "D. Bạo lực cách mạng (kết hợp lực lượng chính trị và lực lượng vũ trang)."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 64. Trong số các nguyên nhân dẫn đến thắng lợi của cuộc Cách mạng tháng Tám (1945), nguyên nhân chủ quan nào mang tính chất quyết định nhất?",
+            options: [
+                "A. Sự lãnh đạo đúng đắn, sáng suốt, khéo léo của Đảng.",
+                "B. Truyền thống yêu nước và khối đại đoàn kết của dân tộc ta.",
+                "C. Sự ủng hộ to lớn của phong trào công nhân quốc tế.",
+                "D. Khối liên minh công - nông được xây dựng vững chắc."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 65. Yếu tố nào trên thế giới (nguyên nhân khách quan) đã góp phần tạo điều kiện thuận lợi dẫn đến thành công của Cách mạng tháng Tám năm 1945?",
+            options: [
+                "A. Phong trào giải phóng dân tộc ở châu Á dâng cao.",
+                "B. Liên quân Anh - Mỹ trực tiếp ném bom đánh Nhật ở Đông Dương.",
+                "C. Chiến thắng của Hồng quân Liên Xô và phe Đồng minh đánh bại phát xít Nhật.",
+                "D. Thực dân Pháp bị phát xít Đức chiếm đóng ở châu Âu."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 66. Sau Chiến tranh thế giới thứ nhất, thực dân Pháp đã sử dụng thủ đoạn thâm độc nào về chính trị và văn hóa nhằm nô dịch lâu dài nhân dân ta?",
+            options: [
+                "A. Trao quyền tự trị cho tầng lớp quan lại người Việt.",
+                "B. Chia để trị, thực hiện chính sách văn hóa nô dịch và ngu dân.",
+                "C. Phổ cập giáo dục đại học bằng tiếng Pháp cho toàn dân.",
+                "D. Cho phép tự do lập hội, lập đảng phái chính trị."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 67. Trước Chiến tranh thế giới thứ nhất (1914), xã hội Việt Nam đã hình thành và tồn tại những giai cấp cơ bản nào?",
+            options: [
+                "A. Địa chủ phong kiến, tư sản và công nhân.",
+                "B. Địa chủ phong kiến, nông dân và tiểu tư sản.",
+                "C. Địa chủ phong kiến, nông dân và tư sản dân tộc.",
+                "D. Địa chủ phong kiến, nông dân và công nhân."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 68. Nông dân được đánh giá là “một lực lượng cách mạng to lớn của dân tộc” chủ yếu là do đặc điểm nào dưới đây?",
+            options: [
+                "A. Nắm giữ nền kinh tế hàng hóa trọng điểm của đất nước.",
+                "B. Có số lượng đông đảo nhất, bị áp bức bóc lột nặng nề nên căm thù giặc sâu sắc.",
+                "C. Có tinh thần cách mạng triệt để nhất và ý thức tổ chức kỷ luật cao.",
+                "D. Có khả năng tiếp thu nhanh chóng tư tưởng tư sản dân quyền."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 69. Dưới ách thống trị thuộc địa của đế quốc Pháp, những giai cấp, tầng lớp nào thuộc thân phận bị trị ở Việt Nam?",
+            options: [
+                "A. Công nhân, nông dân, tiểu tư sản, tư sản dân tộc, địa chủ vừa và nhỏ.",
+                "B. Toàn bộ các giai cấp trong xã hội không trừ một ai.",
+                "C. Công nhân, nông dân và đại địa chủ phong kiến.",
+                "D. Nông dân, công nhân, tư sản dân tộc và tư sản mại bản."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 70. Trong xã hội thuộc địa nửa phong kiến, giai cấp nào có tinh thần dân tộc dân chủ, chống đế quốc nhưng thái độ không kiên định, dễ thỏa hiệp?",
+            options: [
+                "A. Tầng lớp tiểu tư sản trí thức.",
+                "B. Giai cấp tư sản dân tộc.",
+                "C. Giai cấp công nhân.",
+                "D. Tầng lớp trung nông."
+            ],
+            correct: 1
+        },
+        // Bắt đầu copy từ đây (Câu 71 - 100)
+        {
+            q: "Câu 71. Sự kiện nào đánh dấu bước ngoặt Nguyễn Ái Quốc tìm thấy con đường cứu nước đúng đắn cho dân tộc Việt Nam?",
+            options: [
+                "A. Gửi Bản yêu sách của nhân dân An Nam đến Hội nghị Véc-xai (1919).",
+                "B. Đọc Sơ thảo Luận cương của V.I. Lênin về vấn đề dân tộc và thuộc địa (7/1920).",
+                "C. Tham gia sáng lập Đảng Cộng sản Pháp (12/1920).",
+                "D. Thành lập Hội Việt Nam Cách mạng Thanh niên (6/1925)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 72. Theo Cương lĩnh chính trị đầu tiên của Đảng (2/1930), giai cấp, tầng lớp nào sau đây cách mạng cần phải lôi kéo, lợi dụng hoặc trung lập?",
+            options: [
+                "A. Công nhân và nông dân.",
+                "B. Tiểu tư sản, trí thức.",
+                "C. Phú nông, trung - tiểu địa chủ và tư sản dân tộc.",
+                "D. Đại địa chủ và tư sản mại bản."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 73. Tổ chức cộng sản đầu tiên ở Việt Nam ra đời vào tháng 6 năm 1929 có tên gọi là gì?",
+            options: [
+                "A. Đông Dương Cộng sản đảng.",
+                "B. An Nam Cộng sản đảng.",
+                "C. Đông Dương Cộng sản liên đoàn.",
+                "D. Đảng Cộng sản Việt Nam."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 74. Con đường cách mạng Việt Nam được xác định trong Cương lĩnh chính trị đầu tiên do đồng chí Nguyễn Ái Quốc khởi thảo là gì?",
+            options: [
+                "A. Làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản.",
+                "B. Làm cách mạng giải phóng dân tộc để tiến thẳng lên chủ nghĩa xã hội.",
+                "C. Tiến hành cách mạng xã hội chủ nghĩa ngay lập tức.",
+                "D. Làm cách mạng ruộng đất để lật đổ ách thống trị của địa chủ phong kiến."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 75. Tổ chức nào dưới đây KHÔNG phải là một tổ chức cộng sản?",
+            options: [
+                "A. Đông Dương Cộng sản đảng.",
+                "B. An Nam Cộng sản đảng.",
+                "C. Hội Việt Nam Cách mạng Thanh niên.",
+                "D. Đông Dương Cộng sản liên đoàn."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 76. Dưới chế độ thực dân nửa phong kiến, giai cấp nông dân Việt Nam có yêu cầu bức thiết nhất là gì?",
+            options: [
+                "A. Được chia ruộng đất công.",
+                "B. Tự do tín ngưỡng, tôn giáo.",
+                "C. Độc lập dân tộc.",
+                "D. Tăng lương, giảm giờ làm."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 77. Nguyễn Ái Quốc thành lập Hội Việt Nam Cách mạng Thanh niên (6/1925) nhằm mục đích chủ yếu gì?",
+            options: [
+                "A. Tổ chức ám sát các viên chức thực dân Pháp.",
+                "B. Đào tạo cán bộ, truyền bá chủ nghĩa Mác - Lênin để chuẩn bị thành lập Đảng.",
+                "C. Chuẩn bị vũ khí để tiến hành khởi nghĩa vũ trang.",
+                "D. Đưa thanh niên Việt Nam sang Pháp du học."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 78. Tư tưởng cốt lõi xuyên suốt trong Cương lĩnh chính trị đầu tiên của Đảng (2/1930) là gì?",
+            options: [
+                "A. Đấu tranh giai cấp.",
+                "B. Cách mạng ruộng đất.",
+                "C. Độc lập, tự do.",
+                "D. Đoàn kết quốc tế."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 79. Điểm khác biệt căn bản nhất về con đường tìm ra chân lý cứu nước của Nguyễn Ái Quốc so với các sĩ phu yêu nước tiền bối là gì?",
+            options: [
+                "A. Sang phương Tây (nơi có nền tư bản phát triển) để tìm hiểu và học hỏi.",
+                "B. Sang phương Đông (Nhật Bản, Trung Quốc) để xin viện trợ.",
+                "C. Dựa vào sự giúp đỡ của giai cấp tư sản thế giới.",
+                "D. Kêu gọi sự can thiệp của Liên Hợp Quốc."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 80. Tầng lớp tư sản mại bản có thái độ chính trị như thế nào đối với phong trào cách mạng Việt Nam?",
+            options: [
+                "A. Có tinh thần yêu nước cao, sẵn sàng hi sinh vì dân tộc.",
+                "B. Thái độ phản động, làm tay sai cho đế quốc, là kẻ thù của cách mạng.",
+                "C. Lưỡng lự, dễ thỏa hiệp nhưng có thể lôi kéo được.",
+                "D. Kiên quyết chống đế quốc nhưng không chống phong kiến."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 81. Vì sao liên minh công – nông được xem là một nhân tố chiến lược của cách mạng Việt Nam?",
+            options: [
+                "A. Vì đây là hai giai cấp duy nhất trong xã hội.",
+                "B. Vì họ có trình độ học vấn cao nhất.",
+                "C. Vì họ tạo ra sức mạnh hùng hậu nhất, làm nòng cốt cho mặt trận dân tộc thống nhất.",
+                "D. Vì họ được Quốc tế Cộng sản trả lương để làm cách mạng."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 82. Vì sao khuynh hướng cách mạng vô sản lại thắng thế trong phong trào cách mạng Việt Nam từ năm 1920 đến năm 1930?",
+            options: [
+                "A. Vì có sự can thiệp quân sự của Liên Xô.",
+                "B. Vì thực dân Pháp chủ động nhượng bộ.",
+                "C. Vì khuynh hướng này tiên tiến, triệt để và đáp ứng đúng yêu cầu của lịch sử dân tộc.",
+                "D. Vì giai cấp tư sản Việt Nam tự nguyện nhường quyền lãnh đạo."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 83. Vì sao các văn kiện (Chính cương, Sách lược, Điều lệ vắn tắt) do Nguyễn Ái Quốc soạn thảo được coi là Cương lĩnh chính trị đầu tiên của Đảng?",
+            options: [
+                "A. Vì các văn kiện này đã vạch ra được những vấn đề đường lối cơ bản nhất của cách mạng Việt Nam.",
+                "B. Vì đây là những văn kiện có độ dài lớn nhất.",
+                "C. Vì được viết hoàn toàn bằng tiếng Pháp.",
+                "D. Vì được Quốc tế Cộng sản gửi từ Matxcơva về."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 84. Tài liệu nào sau đây được Đảng ta đánh giá như một văn kiện mang tính chất Cương lĩnh quân sự đầu tiên?",
+            options: [
+                "A. Lời kêu gọi toàn quốc kháng chiến.",
+                "B. Quân lệnh số 1 của Ủy ban khởi nghĩa.",
+                "C. Tác phẩm Đường Kách mệnh.",
+                "D. Chỉ thị thành lập Đội Việt Nam Tuyên truyền Giải phóng quân."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 85. Tại Đại hội đại biểu toàn quốc lần thứ nhất (3/1935), Đảng ta đã xác định nhiệm vụ trước mắt nào cho phong trào cách mạng?",
+            options: [
+                "A. Tiến hành Tổng khởi nghĩa giành chính quyền.",
+                "B. Củng cố, phát triển Đảng, vận động quần chúng và chống chiến tranh đế quốc.",
+                "C. Chuyển hướng chỉ đạo chiến lược, đặt giải phóng dân tộc lên hàng đầu.",
+                "D. Thành lập Mặt trận Việt Minh."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 86. Đối tượng chủ yếu của cách mạng Việt Nam trong giai đoạn 1936 - 1939 được Đảng ta xác định là ai?",
+            options: [
+                "A. Toàn bộ thực dân Pháp và phong kiến tay sai.",
+                "B. Bộ phận đế quốc phát xít xâm lược và bọn phản động tay sai.",
+                "C. Giai cấp địa chủ phong kiến và tư sản mại bản.",
+                "D. Phát xít Nhật và bọn Việt gian."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 87. Điều kiện khách quan nào đã tạo ra khả năng đấu tranh công khai, hợp pháp cho phong trào cách mạng Đông Dương giai đoạn 1936-1939?",
+            options: [
+                "A. Chiến tranh thế giới thứ hai bùng nổ.",
+                "B. Thực dân Pháp suy yếu do khủng hoảng kinh tế.",
+                "C. Mặt trận Nhân dân Pháp lên cầm quyền, ban hành một số quyền tự do dân chủ.",
+                "D. Quân đội Nhật Bản tiến vào Đông Dương."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 88. Vì sao trong giai đoạn 1936 – 1939 Đảng ta lại chủ trương phát động một cao trào cách mạng mới (cao trào dân chủ)?",
+            options: [
+                "A. Do nguy cơ của chủ nghĩa phát xít và tận dụng điều kiện thuận lợi khi Mặt trận Nhân dân Pháp cầm quyền.",
+                "B. Do có lệnh trực tiếp khởi nghĩa từ Quốc tế Cộng sản.",
+                "C. Do thực dân Pháp tuyên bố trao trả độc lập cho Việt Nam.",
+                "D. Do Đảng ta đã xây dựng xong quân đội chính quy."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 89. Cao trào nào được Đảng ta đánh giá là bước tiền đề, dọn đường trực tiếp cho cuộc Tổng khởi nghĩa tháng Tám năm 1945?",
+            options: [
+                "A. Phong trào Xô Viết Nghệ - Tĩnh (1930 - 1931).",
+                "B. Cao trào Dân chủ Đông Dương (1936 - 1939).",
+                "C. Cao trào kháng Nhật cứu nước (từ tháng 3/1945).",
+                "D. Phong trào bình dân học vụ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 90. Tên gọi của lực lượng vũ trang quần chúng được thành lập ở Nghệ An và Hà Tĩnh trong cao trào cách mạng 1930 - 1931 là gì?",
+            options: [
+                "A. Việt Nam Giải phóng quân.",
+                "B. Tự vệ Đỏ.",
+                "C. Cứu quốc quân.",
+                "D. Dân quân du kích."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 91. Hình ảnh 'Lá cờ đỏ sao vàng' xuất hiện lần đầu tiên ở nước ta trong cuộc đấu tranh nào?",
+            options: [
+                "A. Cuộc khởi nghĩa Bắc Sơn (9/1940).",
+                "B. Cuộc khởi nghĩa Nam Kỳ (11/1940).",
+                "C. Binh biến Đô Lương (1/1941).",
+                "D. Cách mạng tháng Tám (8/1945)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 92. Điền từ còn thiếu vào thư của Hồ Chí Minh kêu gọi tổng khởi nghĩa (8/1945): 'Giờ quyết định cho (......) đã đến. Toàn quốc đồng bào hãy đứng dậy đem sức ta mà (......) cho ta.'",
+            options: [
+                "A. Tổ quốc - chiến đấu.",
+                "B. Đất nước - giành độc lập.",
+                "C. Vận mệnh dân tộc - tự giải phóng.",
+                "D. Cách mạng - đánh đuổi Pháp Nhật."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 93. Bài học kinh nghiệm: 'Giương cao ngọn cờ giải phóng dân tộc, giải quyết đúng đắn mối quan hệ giữa hai nhiệm vụ độc lập dân tộc và cách mạng ruộng đất' được Đảng ta đúc rút chủ yếu từ phong trào nào?",
+            options: [
+                "A. Quá trình lãnh đạo phong trào cách mạng 1930 - 1945.",
+                "B. Kháng chiến chống Mỹ cứu nước.",
+                "C. Kháng chiến chống Pháp (1945 - 1954).",
+                "D. Công cuộc Đổi mới năm 1986."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 94. Quan điểm: 'Trong lúc này... nếu không đòi được độc lập tự do cho toàn thể dân tộc... thì quyền lợi của bộ phận, của giai cấp đến vạn năm cũng không đòi lại được' được đề ra tại Hội nghị nào?",
+            options: [
+                "A. Hội nghị thành lập Đảng (2/1930).",
+                "B. Hội nghị Trung ương 6 (11/1939).",
+                "C. Hội nghị Trung ương 7 (11/1940).",
+                "D. Hội nghị Trung ương 8 (5/1941)."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 95. Cuộc Tổng khởi nghĩa tháng Tám năm 1945 đã nổ ra và giành được thắng lợi nhanh chóng trên cả nước trong khoảng thời gian bao lâu?",
+            options: [
+                "A. Khoảng 1 tuần.",
+                "B. Khoảng 15 ngày (từ 14/8 đến 28/8/1945).",
+                "C. Khoảng 1 tháng.",
+                "D. Khoảng 3 tháng."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 96. Hội nghị nào của Ban Chấp hành Trung ương Đảng được đánh giá là mở đầu cho chủ trương chuyển hướng chỉ đạo chiến lược cách mạng (đặt giải phóng dân tộc lên hàng đầu)?",
+            options: [
+                "A. Hội nghị Trung ương 6 (11/1939).",
+                "B. Hội nghị Trung ương 7 (11/1940).",
+                "C. Hội nghị Trung ương 8 (5/1941).",
+                "D. Hội nghị toàn quốc của Đảng (8/1945)."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 97. Hội nghị nào của Ban Chấp hành Trung ương Đảng được đánh giá là đã HOÀN CHỈNH chủ trương chuyển hướng chỉ đạo chiến lược cách mạng Việt Nam?",
+            options: [
+                "A. Hội nghị Trung ương 6 (11/1939).",
+                "B. Hội nghị Trung ương 7 (11/1940).",
+                "C. Hội nghị Trung ương 8 (5/1941).",
+                "D. Hội nghị toàn quốc của Đảng (8/1945)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 98. Thắng lợi của cuộc Cách mạng tháng Tám năm 1945 đã mở ra kỷ nguyên mới nào trong tiến trình lịch sử dân tộc Việt Nam?",
+            options: [
+                "A. Kỷ nguyên công nghiệp hóa, hiện đại hóa.",
+                "B. Kỷ nguyên phong kiến độc lập tự chủ.",
+                "C. Kỷ nguyên độc lập dân tộc gắn liền với chủ nghĩa xã hội.",
+                "D. Kỷ nguyên hội nhập kinh tế quốc tế."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 99. Vì sao nhân dân ta phải gấp rút tiến hành Tổng khởi nghĩa giành chính quyền trước khi quân Đồng minh kéo vào Đông Dương?",
+            options: [
+                "A. Để tránh bị quân Đồng minh tiêu diệt.",
+                "B. Để tạo thế hợp pháp, đón Đồng minh với tư cách là người chủ thực sự của đất nước.",
+                "C. Để kịp thời di tản lực lượng ra nước ngoài.",
+                "D. Để xin quân Đồng minh viện trợ vũ khí."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 100. Hội nghị nào của Đảng đã chính thức quyết định phát động toàn dân nổi dậy Tổng khởi nghĩa giành chính quyền trước khi quân Đồng minh vào Đông Dương?",
+            options: [
+                "A. Hội nghị Trung ương 8 (5/1941).",
+                "B. Đại hội Quốc dân Tân Trào (16/8/1945).",
+                "C. Hội nghị toàn quốc của Đảng (13-15/8/1945).",
+                "D. Đại hội Đảng toàn quốc lần thứ I (3/1935)."
+            ],
+            correct: 2
+        },
+        // Bắt đầu copy từ đây (Câu 101 - 112)
+        {
+            q: "Câu 101. Đoạn trích: “Đây là văn kiện lịch sử có giá trị tư tưởng lớn... là thiên anh hùng ca chiến đấu và chiến thắng... của nhân dân Việt Nam trong sự nghiệp giành và giữ nền độc lập, tự do” đề cập đến tác phẩm nào dưới đây?",
+            options: [
+                "A. Bản án chế độ thực dân Pháp.",
+                "B. Tuyên ngôn Độc lập (1945).",
+                "C. Lời kêu gọi toàn quốc kháng chiến (1946).",
+                "D. Kháng chiến nhất định thắng lợi."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 102. Cuối tháng 8 năm 1945, Hồ Chí Minh đã soạn thảo bản Tuyên ngôn Độc lập khai sinh ra nước Việt Nam Dân chủ Cộng hòa tại địa điểm nào?",
+            options: [
+                "A. Lán Nà Nưa (Tuyên Quang).",
+                "B. Hang Pác Bó (Cao Bằng).",
+                "C. Số 48 phố Hàng Ngang (Hà Nội).",
+                "D. Quảng trường Ba Đình (Hà Nội)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 103. Nguyễn Ái Quốc chính thức lấy tên là Hồ Chí Minh vào khoảng thời gian nào?",
+            options: [
+                "A. Năm 1911 (khi ra đi tìm đường cứu nước).",
+                "B. Năm 1920 (khi đọc Sơ thảo Luận cương của Lênin).",
+                "C. Năm 1930 (khi thành lập Đảng).",
+                "D. Năm 1942 (trước khi sang Trung Quốc bắt liên lạc với Đồng minh)."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 104. Nhận định “Cách mạng Tháng Tám Việt Nam là một cuộc cách mạng giải phóng dân tộc... làm cho nước Việt Nam thành một nước độc lập tự do” thể hiện tính chất nổi bật nhất nào của cuộc cách mạng này?",
+            options: [
+                "A. Tính chất dân chủ tư sản.",
+                "B. Tính chất dân tộc giải phóng (giải phóng dân tộc).",
+                "C. Tính chất cách mạng xã hội chủ nghĩa.",
+                "D. Tính chất cách mạng ruộng đất triệt để."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 105. Tổ chức quốc tế ĐẦU TIÊN do Nguyễn Ái Quốc tham gia sáng lập (năm 1921 tại Pháp) có tên gọi là gì?",
+            options: [
+                "A. Hội Liên hiệp thuộc địa.",
+                "B. Hội Việt Nam Cách mạng Thanh niên.",
+                "C. Hội Liên hiệp các dân tộc bị áp bức Á Đông.",
+                "D. Đảng Cộng sản Đông Dương."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 106. Nguyễn Ái Quốc đã đánh giá như thế nào về cuộc Cách mạng tháng Mười Nga năm 1917 trong quá trình tìm đường cứu nước?",
+            options: [
+                "A. Là một cuộc cách mạng tư sản không triệt để.",
+                "B. Là cuộc cách mạng chỉ mang ý nghĩa khu vực châu Âu.",
+                "C. Là cuộc cách mạng triệt để nhất, đã thành công đến nơi.",
+                "D. Là cuộc cách mạng mang tính chất thỏa hiệp giai cấp."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 107. Tuy thất bại, nhưng các phong trào yêu nước ở Việt Nam cuối thế kỷ XIX - đầu thế kỷ XX đã để lại ý nghĩa sâu sắc nhất là gì?",
+            options: [
+                "A. Chứng tỏ giai cấp phong kiến vẫn còn khả năng lãnh đạo đất nước.",
+                "B. Gây tiếng vang lớn buộc thực dân Pháp phải nhượng bộ chính trị.",
+                "C. Chứng tỏ sự bế tắc, khủng hoảng về đường lối, đòi hỏi phải tìm ra con đường cứu nước mới.",
+                "D. Hoàn thành việc giải phóng một số vùng lãnh thổ ở Bắc Kỳ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 108. Theo Điều lệ Đảng, đâu được xem là nguyên tắc tổ chức CƠ BẢN NHẤT của Đảng Cộng sản Việt Nam?",
+            options: [
+                "A. Tập trung dân chủ.",
+                "B. Tự phê bình và phê bình.",
+                "C. Đoàn kết thống nhất trong Đảng.",
+                "D. Gắn bó mật thiết với nhân dân."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 109. Việc học tập môn Lịch sử Đảng Cộng sản Việt Nam có ý nghĩa thiết thực như thế nào đối với sinh viên?",
+            options: [
+                "A. Cung cấp kỹ năng thực hành nghề nghiệp chuyên môn.",
+                "B. Bồi dưỡng lý tưởng cách mạng, củng cố niềm tin vào sự lãnh đạo của Đảng và con đường đi lên CNXH.",
+                "C. Rèn luyện thể chất và khả năng tư duy logic.",
+                "D. Thay thế hoàn toàn cho các môn khoa học tự nhiên."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 110. Nền tảng tư tưởng và kim chỉ nam cho mọi hành động của Đảng Cộng sản Việt Nam hiện nay được xác định là gì?",
+            options: [
+                "A. Chủ nghĩa yêu nước và truyền thống văn hóa dân tộc.",
+                "B. Tư tưởng dân chủ tư sản.",
+                "C. Chủ nghĩa Mác - Lênin và Tư tưởng Hồ Chí Minh.",
+                "D. Chủ nghĩa dân tộc dân chủ nhân dân."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 111. Tại Đại hội Tours (12/1920), sau khi bỏ phiếu tán thành gia nhập Quốc tế Cộng sản, Nguyễn Ái Quốc đã có bước chuyển biến vĩ đại nào?",
+            options: [
+                "A. Chuyển từ nhà dân chủ tư sản thành nhà cộng sản.",
+                "B. Chuyển từ người yêu nước thành người cộng sản (từ lập trường dân tộc sang lập trường vô sản).",
+                "C. Chuyển từ hoạt động bí mật sang hoạt động công khai hoàn toàn.",
+                "D. Chuyển từ việc đấu tranh ngoại giao sang đấu tranh vũ trang."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 112. Vì sao trong Cương lĩnh chính trị đầu tiên (2/1930), Nguyễn Ái Quốc lại khẳng định cách mạng Việt Nam là một bộ phận của cách mạng thế giới?",
+            options: [
+                "A. Vì Việt Nam và thế giới có chung một nền văn hóa.",
+                "B. Vì Việt Nam cần phải đóng thế lực phí cho Quốc tế Cộng sản.",
+                "C. Vì cách mạng Việt Nam đứng chung một mặt trận với vô sản thế giới chống lại kẻ thù chung là chủ nghĩa đế quốc.",
+                "D. Vì giai cấp công nhân Việt Nam là lực lượng đông đảo nhất thế giới."
+            ],
+            correct: 2
+        },
+        
+        // Kết thúc copy
+        ];
+        // ... (mảng quizData của bạn ở trên) ...
+        // ]; <-- Tìm đến vị trí này
+
+        // === THÊM ĐOẠN CODE NÀY VÀO ĐỂ ĐẢO ĐÁP ÁN ===
+        
+        // Thuật toán đảo mảng ngẫu nhiên (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Xử lý đảo đáp án cho toàn bộ câu hỏi
+        quizData.forEach(item => {
+            // 1. Tách nội dung và ghi nhớ đáp án đúng hiện tại
+            let tempOptions = item.options.map((opt, idx) => {
+                // Dùng Regex xóa các tiền tố "A. ", "B. ", "C. ", "D. " cũ
+                let cleanText = opt.replace(/^[A-D]\.\s*/, ""); 
+                return { 
+                    text: cleanText, 
+                    isCorrect: idx === item.correct // Lưu lại cờ nhận diện đáp án đúng
+                };
+            });
+
+            // 2. Tiến hành đảo lộn ngẫu nhiên vị trí các câu trả lời
+            shuffleArray(tempOptions);
+
+            // 3. Gắn lại chữ cái A, B, C, D theo thứ tự mới và cập nhật dữ liệu
+            const labels = ["A. ", "B. ", "C. ", "D. "];
+            item.options = tempOptions.map((opt, idx) => labels[idx] + opt.text);
+            
+            // 4. Cập nhật lại chỉ mục (index) của đáp án đúng sau khi đã đảo
+            item.correct = tempOptions.findIndex(opt => opt.isCorrect);
+        });
+
+        // === KẾT THÚC ĐOẠN CODE ĐẢO ĐÁP ÁN ===
+
+        const quizContainer = document.getElementById('quiz');
+        // ... (phần code render ở dưới giữ nguyên) ...
+        // Render questions
+        quizData.forEach((item, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-box';
+            
+            let optionsHTML = '';
+            item.options.forEach((opt, optIndex) => {
+                optionsHTML += `
+                    <label class="option-label" id="label-${index}-${optIndex}">
+                        <input type="radio" name="q${index}" value="${optIndex}">
+                        ${opt}
+                    </label>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="question-text">${item.q}</div>
+                <div class="options" id="options-${index}">
+                    ${optionsHTML}
+                </div>
+            `;
+            quizContainer.appendChild(questionDiv);
+        });
+
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                
+                // Reset all styles first
+                item.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === item.correct) {
+                        score++;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
+                    }
+                } else {
+                    // Show correct answer if missed
+                    document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
+                }
+            });
+
+            document.getElementById('result').innerText = `Kết quả: Bạn trả lời đúng ${score} / ${quizData.length} câu!`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
