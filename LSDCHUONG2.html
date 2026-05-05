@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Lịch sử Đảng - Chương 1</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; color: #333; }
+        h2 { text-align: center; color: #d9534f; }
+        .quiz-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .question-box { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .question-text { font-weight: bold; margin-bottom: 10px; font-size: 16px; }
+        .option-label { display: block; margin: 8px 0; padding: 10px; background: #fdfdfd; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { background: #f0f8ff; border-color: #007bff; }
+        .option-label input { margin-right: 10px; cursor: pointer; }
+        .btn-submit { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-submit:hover { background: #218838; }
+        #result { margin-top: 20px; text-align: center; font-size: 22px; font-weight: bold; color: #d9534f; }
+        .correct { background: #d4edda !important; border-color: #c3e6cb !important; color: #155724; font-weight: bold; }
+        .wrong { background: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+
+    <h2>Ôn tập Lịch sử Đảng - Chương 2</h2>
+    <div class="quiz-container">
+        <div id="quiz"></div>
+        <button class="btn-submit" onclick="checkAnswers()">Nộp bài & Xem điểm</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            // Bắt đầu copy từ đây (Chương 2: Câu 1 - 20)
+        {
+            q: "Câu 1. Thành ngữ “Ngàn cân treo sợi tóc” thường được dùng để diễn tả tình hình nước ta trong thời kỳ nào?",
+            options: [
+                "A. Trong cuộc Tổng khởi nghĩa tháng Tám năm 1945.",
+                "B. Giai đoạn sau Cách mạng tháng Tám (1945 - 1946).",
+                "C. Giai đoạn Toàn quốc kháng chiến (1946 - 1950).",
+                "D. Sau hiệp định Giơnevơ năm 1954."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 2. Sau Cách mạng tháng Tám năm 1945, Đảng ta xác định kẻ thù chính, nguy hiểm nhất của cách mạng Việt Nam lúc này là ai?",
+            options: [
+                "A. Quân đội Tưởng Giới Thạch.",
+                "B. Quân đội Hoàng gia Anh.",
+                "C. Thực dân Pháp.",
+                "D. Tàn quân phát xít Nhật."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 3. Hiệp định Sơ bộ (6/3/1946) và Tạm ước (14/9/1946) là sự thỏa thuận ngoại giao giữa các chủ thể nào?",
+            options: [
+                "A. Chính phủ Việt Nam Dân chủ Cộng hòa và quân đội Tưởng.",
+                "B. Chính phủ Việt Nam Dân chủ Cộng hòa và Chính phủ Pháp.",
+                "C. Thực dân Pháp và quân đội Tưởng Giới Thạch.",
+                "D. Mặt trận Việt Minh và lực lượng Đồng minh."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 4. Trong Chỉ thị “Kháng chiến kiến quốc” (25/11/1945), Trung ương Đảng đã xác định nhiệm vụ nào là trung tâm, quan trọng nhất?",
+            options: [
+                "A. Diệt giặc đói và giặc dốt.",
+                "B. Củng cố, bảo vệ chính quyền cách mạng.",
+                "C. Hoàn thành triệt để cách mạng ruộng đất.",
+                "D. Cải thiện đời sống nhân dân lao động."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 5. Ngay sau khi ký bản Hiệp định Sơ bộ, ngày 9/3/1946, Ban Thường vụ Trung ương Đảng đã ra Chỉ thị lịch sử nào?",
+            options: [
+                "A. Chỉ thị Toàn dân kháng chiến.",
+                "B. Chỉ thị Nhật - Pháp bắn nhau và hành động của chúng ta.",
+                "C. Chỉ thị Hòa để tiến.",
+                "D. Chỉ thị Kháng chiến kiến quốc."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 6. Sau Cách mạng tháng Tám thành công, nước ta có những yếu tố thuận lợi căn bản nào?",
+            options: [
+                "A. Nhận được sự viện trợ to lớn ngay lập tức từ Liên Xô và Trung Quốc.",
+                "B. Thực dân Pháp đã hoàn toàn từ bỏ dã tâm xâm lược Đông Dương.",
+                "C. Nước ta đã có độc lập, nhân dân làm chủ, Đảng Cộng sản trở thành đảng cầm quyền.",
+                "D. Không còn bất kỳ lực lượng quân đội nước ngoài nào đồn trú trên lãnh thổ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 7. Chính cương Đảng Lao động Việt Nam (Đại hội II - 1951) đã nêu ra nhiệm vụ cơ bản của cách mạng Việt Nam là gì?",
+            options: [
+                "A. Đánh đuổi đế quốc xâm lược, giành độc lập và thống nhất thực sự, xóa bỏ tàn dư phong kiến.",
+                "B. Xây dựng chủ nghĩa xã hội trên phạm vi cả nước.",
+                "C. Tiến hành công nghiệp hóa, hiện đại hóa đất nước.",
+                "D. Xóa bỏ hoàn toàn giai cấp tư sản và địa chủ."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 8. Thực dân Pháp nổ súng đánh chiếm Sài Gòn, mở đầu cuộc chiến tranh xâm lược Việt Nam lần thứ hai vào thời gian nào?",
+            options: [
+                "A. Ngày 2/9/1945.",
+                "B. Ngày 23/9/1945.",
+                "C. Ngày 19/12/1946.",
+                "D. Ngày 6/3/1946."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 9. Trong đường lối kháng chiến chống Pháp (1946 - 1950), Đảng ta đã đề ra mục đích kháng chiến là gì?",
+            options: [
+                "A. Bảo vệ chính quyền cách mạng ở Thủ đô Hà Nội.",
+                "B. Tiêu diệt toàn bộ quân đội Pháp tại Đông Dương.",
+                "C. Đánh đổ thực dân Pháp xâm lược, giành độc lập tự do, thống nhất hoàn toàn.",
+                "D. Tranh thủ sự ủng hộ của phe tư bản chủ nghĩa."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 10. Cuộc bầu cử Quốc hội đầu tiên của nước Việt Nam Dân chủ Cộng hòa diễn ra vào ngày tháng năm nào?",
+            options: [
+                "A. 2/9/1945.",
+                "B. 6/1/1946.",
+                "C. 9/11/1946.",
+                "D. 19/12/1946."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 11. Lý do chủ yếu nào khiến Đảng ta chọn giải pháp nhân nhượng, hòa hoãn với quân Pháp thông qua Hiệp định Sơ bộ (6/3/1946)?",
+            options: [
+                "A. Do quân Pháp lúc đó quá mạnh, ta không thể chống cự.",
+                "B. Để nhanh chóng đuổi 20 vạn quân Tưởng về nước, tranh thủ thời gian chuẩn bị lực lượng đánh Pháp.",
+                "C. Do ta tin tưởng vào thiện chí hòa bình của chính phủ Pháp.",
+                "D. Để được Pháp công nhận Việt Nam là một quốc gia hoàn toàn độc lập."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 12. Để giải quyết NẠN ĐÓI gay gắt ngay sau Cách mạng tháng Tám, Đảng và Chính phủ ta đã phát động phong trào gì?",
+            options: [
+                "A. Tuần lễ vàng và Xây dựng Quỹ độc lập.",
+                "B. Phong trào Bình dân học vụ.",
+                "C. Phong trào “Tăng gia sản xuất”, lập “Hũ gạo cứu đói”, “Ngày đồng tâm”.",
+                "D. Tịch thu toàn bộ ruộng đất của địa chủ chia cho dân nghèo."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 13. Trước sức ép của quân đội Tưởng Giới Thạch, Đảng ta đã mềm dẻo nhường cho các đảng phái tay sai của Tưởng bao nhiêu ghế trong Quốc hội (không qua bầu cử)?",
+            options: [
+                "A. 50 ghế.",
+                "B. 70 ghế.",
+                "C. 100 ghế.",
+                "D. 150 ghế."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 14. Bản Hiến pháp đầu tiên của nước Việt Nam Dân chủ Cộng hòa được Quốc hội thông qua vào thời gian nào?",
+            options: [
+                "A. Ngày 6/1/1946.",
+                "B. Ngày 2/9/1946.",
+                "C. Ngày 9/11/1946.",
+                "D. Ngày 19/12/1946."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 15. Sau khi Pháp và Tưởng bắt tay nhau ký Hiệp ước Trùng Khánh (28/2/1946), Đảng ta đã lựa chọn sách lược ngoại giao nào?",
+            options: [
+                "A. Kiên quyết cầm vũ khí đánh cả Pháp lẫn Tưởng.",
+                "B. Chủ động ký Hiệp định Sơ bộ với Pháp để đuổi Tưởng về nước.",
+                "C. Chấp nhận những yêu sách của Tưởng để chống Pháp.",
+                "D. Kêu gọi sự can thiệp của Liên hợp quốc."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 16. Sự kiện nào được xem là nguyên nhân TRỰC TIẾP châm ngòi cho sự bùng nổ của cuộc Toàn quốc kháng chiến chống thực dân Pháp?",
+            options: [
+                "A. Pháp khiêu khích ở Hải Phòng và Lạng Sơn.",
+                "B. Pháp đổ bộ thêm quân vào cảng Đà Nẵng.",
+                "C. Pháp gửi tối hậu thư đòi tước vũ khí của tự vệ Hà Nội (18/12/1946).",
+                "D. Hội nghị Phông-ten-nơ-blô bị thất bại."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 17. Để đối phó với cuộc tấn công quy mô lớn của thực dân Pháp lên căn cứ địa Việt Bắc, ngày 15/10/1947, Ban Thường vụ Trung ương Đảng đã ra Chỉ thị gì?",
+            options: [
+                "A. Phải phá tan cuộc tấn công mùa đông của giặc Pháp.",
+                "B. Chuẩn bị tổng phản công trên toàn quốc.",
+                "C. Rút toàn bộ cơ quan đầu não sang biên giới Trung Quốc.",
+                "D. Toàn dân kháng chiến."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 18. Sau khi nhận được tối hậu thư của thực dân Pháp (18/12/1946), Ban Thường vụ Trung ương Đảng đã họp khẩn cấp và đưa ra quyết định lịch sử gì?",
+            options: [
+                "A. Chấp nhận giao nộp một phần vũ khí để giữ hòa bình.",
+                "B. Rút toàn bộ lực lượng khỏi Hà Nội để bảo toàn lực lượng.",
+                "C. Ký kết thêm một bản Tạm ước nữa với Pháp.",
+                "D. Phát động toàn dân, toàn quốc tiến hành kháng chiến chống thực dân Pháp."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 19. Hưởng ứng Lời kêu gọi Toàn quốc kháng chiến, quân và dân Thủ đô Hà Nội đã dũng cảm chiến đấu giam chân địch trong thành phố suốt thời gian bao lâu?",
+            options: [
+                "A. 30 ngày đêm.",
+                "B. 45 ngày đêm.",
+                "C. 60 ngày đêm.",
+                "D. 90 ngày đêm."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 20. Quan điểm “mỗi người dân là một chiến sĩ, mỗi làng xã là một pháo đài, mỗi đường phố là một mặt trận” phản ánh tính chất gì của đường lối kháng chiến?",
+            options: [
+                "A. Kháng chiến toàn diện.",
+                "B. Kháng chiến toàn dân.",
+                "C. Kháng chiến trường kỳ.",
+                "D. Kháng chiến dựa vào sức mình là chính."
+            ],
+            correct: 1
+
+        },
+        // Bắt đầu copy từ đây (Câu 21 - 40)
+        {
+            q: "Câu 21. Sau khi các nước xã hội chủ nghĩa đặt quan hệ ngoại giao với Việt Nam (đầu năm 1950), thực dân Pháp đã có hành động gì để đối phó?",
+            options: [
+                "A. Chủ động rút quân khỏi miền Bắc để bảo toàn lực lượng.",
+                "B. Xin đàm phán hòa bình với Chính phủ Việt Nam Dân chủ Cộng hòa.",
+                "C. Thực hiện Kế hoạch Rơ-ve, tăng cường phòng ngự đường số 4, khóa chặt biên giới Việt - Trung.",
+                "D. Mở chiến dịch Điện Biên Phủ để thu hút chủ lực của ta."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 22. Đường lối kháng chiến “Toàn diện” của Đảng ta được hiểu là phải đánh địch trên những mặt trận nào?",
+            options: [
+                "A. Toàn dân, toàn diện, trường kỳ, tự lực cánh sinh.",
+                "B. Quân sự, chính trị, kinh tế, văn hóa và ngoại giao.",
+                "C. Đấu tranh vũ trang, đấu tranh chính trị và binh vận.",
+                "D. Đánh du kích, vận động chiến và công kiên chiến."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 23. Thắng lợi trong cuộc kháng chiến chống thực dân Pháp (1945 - 1954) của nhân dân Việt Nam có ý nghĩa quốc tế nổi bật nhất là gì?",
+            options: [
+                "A. Trực tiếp làm sụp đổ hoàn toàn chủ nghĩa tư bản trên thế giới.",
+                "B. Mở đầu cho kỷ nguyên chinh phục vũ trụ của phe Xã hội chủ nghĩa.",
+                "C. Cổ vũ mạnh mẽ và góp phần làm sụp đổ hệ thống thuộc địa của chủ nghĩa thực dân cũ.",
+                "D. Đánh dấu sự chấm dứt của cuộc Chiến tranh Lạnh."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 24. Mâu thuẫn chủ yếu và gay gắt nhất của xã hội miền Nam Việt Nam dưới ách thống trị của Mỹ - Diệm là gì?",
+            options: [
+                "A. Mâu thuẫn giữa giai cấp công nhân và giai cấp tư sản mại bản.",
+                "B. Mâu thuẫn giữa giai cấp nông dân và giai cấp địa chủ phong kiến.",
+                "C. Mâu thuẫn giữa tư sản dân tộc và tư sản mại bản.",
+                "D. Mâu thuẫn giữa toàn thể nhân dân miền Nam với đế quốc Mỹ và tập đoàn tay sai."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 25. Dưới ánh sáng của Nghị quyết Hội nghị Trung ương lần thứ 15 (1/1959), phong trào đấu tranh nào đã bùng nổ mạnh mẽ ở miền Nam đầu năm 1960?",
+            options: [
+                "A. Phong trào Đồng khởi.",
+                "B. Phong trào Phá ấp chiến lược.",
+                "C. Phong trào Thi đua Ấp Bắc, giết giặc lập công.",
+                "D. Phong trào học sinh, sinh viên ở Sài Gòn."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 26. Phong trào Đồng khởi (1960) nổ ra mạnh mẽ và trở thành ngọn cờ tiêu biểu nhất ở địa phương nào?",
+            options: [
+                "A. Tỉnh Trà Vinh.",
+                "B. Tỉnh Bến Tre.",
+                "C. Tỉnh Quảng Ngãi.",
+                "D. Tỉnh Tây Ninh."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 27. Hội nghị Trung ương lần thứ 15 (1/1959) đã xác định con đường phát triển cơ bản của cách mạng miền Nam là gì?",
+            options: [
+                "A. Đấu tranh nghị trường đòi Mỹ - Diệm thi hành Hiệp định Giơnevơ.",
+                "B. Đấu tranh chính trị hòa bình là con đường duy nhất.",
+                "C. Khởi nghĩa giành chính quyền về tay nhân dân (lấy sức mạnh quần chúng là chủ yếu, kết hợp lực lượng vũ trang).",
+                "D. Chờ đợi sự chi viện vũ khí từ Liên Xô để mở các chiến dịch lớn."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 28. Theo chủ trương của Bộ Chính trị (1961 - 1962), phương châm đấu tranh tại vùng RỪNG NÚI được xác định như thế nào?",
+            options: [
+                "A. Lấy đấu tranh vũ trang là chủ yếu.",
+                "B. Lấy đấu tranh chính trị là chủ yếu.",
+                "C. Kết hợp chặt chẽ đấu tranh vũ trang và đấu tranh chính trị.",
+                "D. Chỉ tiến hành công tác binh vận."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 29. Theo Hiệp định Giơnevơ (1954), Vĩ tuyến 17 được chọn làm giới tuyến quân sự tạm thời. Giới tuyến này chạy qua địa phận tỉnh nào của nước ta hiện nay?",
+            options: [
+                "A. Tỉnh Quảng Bình.",
+                "B. Tỉnh Thừa Thiên Huế.",
+                "C. Tỉnh Hà Tĩnh.",
+                "D. Tỉnh Quảng Trị."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 30. Giai đoạn 1965 – 1968, để cứu vãn nguy cơ sụp đổ của quân đội Sài Gòn, đế quốc Mỹ đã trực tiếp đưa quân viễn chinh vào miền Nam để thực hiện chiến lược chiến tranh gì?",
+            options: [
+                "A. Chiến tranh đặc biệt.",
+                "B. Chiến tranh cục bộ.",
+                "C. Việt Nam hóa chiến tranh.",
+                "D. Chiến tranh đơn phương."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 31. Khẩu hiệu hành động chung của nhân dân cả nước trong cuộc kháng chiến chống đế quốc Mỹ xâm lược là gì?",
+            options: [
+                "A. Thà hy sinh tất cả chứ nhất định không chịu mất nước.",
+                "B. Đánh cho Mỹ cút, đánh cho Ngụy nhào.",
+                "C. Tất cả để đánh thắng giặc Mỹ xâm lược.",
+                "D. Không có gì quý hơn độc lập, tự do."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 32. Trong đường lối kháng chiến chống Mỹ, Đảng ta chỉ đạo đẩy mạnh đánh địch bằng “Ba mũi giáp công”. Đó là những mũi đấu tranh nào?",
+            options: [
+                "A. Quân sự, chính trị, binh vận.",
+                "B. Kinh tế, văn hóa, ngoại giao.",
+                "C. Rừng núi, nông thôn, thành thị.",
+                "D. Lực lượng vũ trang, bộ đội địa phương, dân quân du kích."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 33. Tại Đại hội đại biểu toàn quốc lần thứ III (9/1960), để xây dựng Chủ nghĩa xã hội ở miền Bắc, Đảng ta đã thông qua bản kế hoạch quan trọng nào?",
+            options: [
+                "A. Kế hoạch Khôi phục và phát triển kinh tế (1955 - 1957).",
+                "B. Kế hoạch cải tạo xã hội chủ nghĩa (1958 - 1960).",
+                "C. Kế hoạch Nhà nước 5 năm lần thứ nhất (1961 - 1965).",
+                "D. Kế hoạch công nghiệp hóa hiện đại hóa (1960 - 1970)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 34. Tại Đại hội đại biểu toàn quốc lần thứ III (1960), đồng chí nào đã được bầu làm Bí thư Thứ nhất Ban Chấp hành Trung ương Đảng?",
+            options: [
+                "A. Đồng chí Hồ Chí Minh.",
+                "B. Đồng chí Lê Duẩn.",
+                "C. Đồng chí Trường Chinh.",
+                "D. Đồng chí Phạm Văn Đồng."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 35. Chiến lược “Chiến tranh cục bộ” (1965 - 1968) của đế quốc Mỹ được mở rộng thực hiện trên quy mô nào ở nước ta?",
+            options: [
+                "A. Chỉ tập trung ở miền Nam.",
+                "B. Chỉ tập trung đánh phá miền Bắc.",
+                "C. Cả miền Nam (đưa quân viễn chinh vào) và miền Bắc (chiến tranh phá hoại).",
+                "D. Mở rộng ra toàn bộ khu vực Đông Dương."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 36. Tại các Hội nghị Trung ương 11 và 12 (năm 1965), Đảng ta đã đề ra phương châm chiến lược đánh Mỹ ở miền Nam như thế nào?",
+            options: [
+                "A. Đánh nhanh thắng nhanh, giải phóng miền Nam trong thời gian ngắn.",
+                "B. Đánh lâu dài, dựa vào sức mình là chính, càng đánh càng mạnh.",
+                "C. Tập trung phòng ngự bảo toàn lực lượng, chờ viện trợ từ Liên Xô.",
+                "D. Chủ yếu dùng ngoại giao để ép Mỹ rút quân."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 37. Trận chiến thắng lịch sử “Điện Biên Phủ trên không” của quân dân Thủ đô và miền Bắc diễn ra trong khoảng thời gian nào?",
+            options: [
+                "A. Từ ngày 18/12 đến ngày 30/12/1968.",
+                "B. Từ ngày 27/1 đến ngày 30/4/1972.",
+                "C. Từ ngày 1/5 đến ngày 15/5/1972.",
+                "D. Từ ngày 18/12 đến ngày 30/12/1972."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 38. Bị thiệt hại nặng nề trong trận “Điện Biên Phủ trên không” (1972), đế quốc Mỹ đã buộc phải ký kết hiệp định nào để rút quân khỏi Việt Nam?",
+            options: [
+                "A. Hiệp định Paris (1/1973).",
+                "B. Hiệp định Giơnevơ (1954).",
+                "C. Hiệp định Sơ bộ (1946).",
+                "D. Hiệp định Viêng Chăn (1973)."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 39. Chiến dịch Hồ Chí Minh lịch sử giải phóng hoàn toàn Sài Gòn, kết thúc thắng lợi cuộc kháng chiến chống Mỹ cứu nước vào thời gian nào?",
+            options: [
+                "A. Ngày 26/4/1975.",
+                "B. Ngày 28/4/1975.",
+                "C. Ngày 30/4/1975.",
+                "D. Ngày 1/5/1975."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 40. Thắng lợi của cuộc kháng chiến chống Mỹ cứu nước của nhân dân Việt Nam đã làm phá sản hoàn toàn hình thái cai trị nào của đế quốc Mỹ?",
+            options: [
+                "A. Chủ nghĩa thực dân cũ.",
+                "B. Chủ nghĩa thực dân mới.",
+                "C. Chủ nghĩa tư bản độc quyền.",
+                "D. Chủ nghĩa phát xít."
+            ],
+            correct: 1
+        }
+        // Kết thúc copy
+        ];
+        // ... (mảng quizData của bạn ở trên) ...
+        // ]; <-- Tìm đến vị trí này
+
+        // === THÊM ĐOẠN CODE NÀY VÀO ĐỂ ĐẢO ĐÁP ÁN ===
+        
+        // Thuật toán đảo mảng ngẫu nhiên (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Xử lý đảo đáp án cho toàn bộ câu hỏi
+        quizData.forEach(item => {
+            // 1. Tách nội dung và ghi nhớ đáp án đúng hiện tại
+            let tempOptions = item.options.map((opt, idx) => {
+                // Dùng Regex xóa các tiền tố "A. ", "B. ", "C. ", "D. " cũ
+                let cleanText = opt.replace(/^[A-D]\.\s*/, ""); 
+                return { 
+                    text: cleanText, 
+                    isCorrect: idx === item.correct // Lưu lại cờ nhận diện đáp án đúng
+                };
+            });
+
+            // 2. Tiến hành đảo lộn ngẫu nhiên vị trí các câu trả lời
+            shuffleArray(tempOptions);
+
+            // 3. Gắn lại chữ cái A, B, C, D theo thứ tự mới và cập nhật dữ liệu
+            const labels = ["A. ", "B. ", "C. ", "D. "];
+            item.options = tempOptions.map((opt, idx) => labels[idx] + opt.text);
+            
+            // 4. Cập nhật lại chỉ mục (index) của đáp án đúng sau khi đã đảo
+            item.correct = tempOptions.findIndex(opt => opt.isCorrect);
+        });
+
+        // === KẾT THÚC ĐOẠN CODE ĐẢO ĐÁP ÁN ===
+
+        const quizContainer = document.getElementById('quiz');
+        // ... (phần code render ở dưới giữ nguyên) ...
+        // Render questions
+        quizData.forEach((item, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-box';
+            
+            let optionsHTML = '';
+            item.options.forEach((opt, optIndex) => {
+                optionsHTML += `
+                    <label class="option-label" id="label-${index}-${optIndex}">
+                        <input type="radio" name="q${index}" value="${optIndex}">
+                        ${opt}
+                    </label>
+                `;
+            });
+
+            questionDiv.innerHTML = `
+                <div class="question-text">${item.q}</div>
+                <div class="options" id="options-${index}">
+                    ${optionsHTML}
+                </div>
+            `;
+            quizContainer.appendChild(questionDiv);
+        });
+
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                
+                // Reset all styles first
+                item.options.forEach((_, optIndex) => {
+                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                });
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === item.correct) {
+                        score++;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
+                    }
+                } else {
+                    // Show correct answer if missed
+                    document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
+                }
+            });
+
+            document.getElementById('result').innerText = `Kết quả: Bạn trả lời đúng ${score} / ${quizData.length} câu!`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
