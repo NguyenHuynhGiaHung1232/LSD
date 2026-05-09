@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trắc nghiệm Lịch sử Đảng - Chương 2</title>
     <style>
+        /* --- CSS CHO NÚT SWITCH XÁO TRỘN --- */
+        .controls-container { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .switch-label { display: inline-flex; align-items: center; cursor: pointer; font-weight: bold; color: #007bff; user-select: none; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin-right: 10px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(24px); }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; color: #333; }
         h2 { text-align: center; color: #d9534f; }
         .quiz-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
@@ -24,6 +33,22 @@
 
     <h2>Ôn tập Lịch sử Đảng - Chương 2</h2>
     <div class="quiz-container">
+        <div class="quiz-container">
+        <!-- Nút bật/tắt xáo trộn thêm vào đây -->
+        <div class="controls-container">
+            <label class="switch-label">
+                <div class="switch">
+                    <input type="checkbox" id="shuffleQuestionsToggle" onchange="toggleShuffleQuestions()">
+                    <span class="slider"></span>
+                </div>
+                <span>Bật/Tắt xáo trộn câu hỏi</span>
+            </label>
+        </div>
+
+        <div id="quiz"></div>
+        <button class="btn-submit" onclick="checkAnswers()">Nộp bài & Xem điểm</button>
+        <div id="result"></div>
+    </div>
         <div id="quiz"></div>
         <button class="btn-submit" onclick="checkAnswers()">Nộp bài & Xem điểm</button>
         <div id="result"></div>
@@ -1239,39 +1264,68 @@
         // === KẾT THÚC ĐOẠN CODE ĐẢO ĐÁP ÁN ===
 
         const quizContainer = document.getElementById('quiz');
-        // ... (phần code render ở dưới giữ nguyên) ...
-        // Render questions
-        quizData.forEach((item, index) => {
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question-box';
+        
+        // Mảng lưu trữ thứ tự câu hỏi (mặc định là 0, 1, 2, 3...)
+        let questionOrder = Array.from(quizData.keys()); 
+
+        // Hàm vẽ danh sách câu hỏi ra màn hình
+        function renderQuiz() {
+            quizContainer.innerHTML = ''; // Xóa sạch nội dung cũ
             
-            let optionsHTML = '';
-            item.options.forEach((opt, optIndex) => {
-                optionsHTML += `
-                    <label class="option-label" id="label-${index}-${optIndex}">
-                        <input type="radio" name="q${index}" value="${optIndex}">
-                        ${opt}
-                    </label>
+            questionOrder.forEach((qIndex) => {
+                const item = quizData[qIndex];
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-box';
+                
+                let optionsHTML = '';
+                item.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <label class="option-label" id="label-${qIndex}-${optIndex}">
+                            <input type="radio" name="q${qIndex}" value="${optIndex}">
+                            ${opt}
+                        </label>
+                    `;
+                });
+
+                questionDiv.innerHTML = `
+                    <div class="question-text">${item.q}</div>
+                    <div class="options" id="options-${qIndex}">
+                        ${optionsHTML}
+                    </div>
                 `;
+                quizContainer.appendChild(questionDiv);
             });
+        }
 
-            questionDiv.innerHTML = `
-                <div class="question-text">${item.q}</div>
-                <div class="options" id="options-${index}">
-                    ${optionsHTML}
-                </div>
-            `;
-            quizContainer.appendChild(questionDiv);
-        });
+        // Hàm xử lý khi ấn nút công tắc
+        function toggleShuffleQuestions() {
+            const isShuffled = document.getElementById('shuffleQuestionsToggle').checked;
+            
+            if (isShuffled) {
+                // Nếu BẬT: Xáo trộn mảng thứ tự
+                shuffleArray(questionOrder);
+            } else {
+                // Nếu TẮT: Khôi phục lại thứ tự gốc (0 -> 115)
+                questionOrder = Array.from(quizData.keys());
+            }
+            
+            // Xóa điểm số cũ đi (nếu đang xem điểm mà bấm xáo trộn)
+            document.getElementById('result').innerText = '';
+            
+            // Vẽ lại toàn bộ câu hỏi theo thứ tự mới
+            renderQuiz();
+        }
 
+        // --- Hàm chấm điểm (Giữ nguyên logic cũ) ---
         function checkAnswers() {
             let score = 0;
             quizData.forEach((item, index) => {
                 const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
                 
-                // Reset all styles first
+                // Xóa định dạng đúng/sai cũ
                 item.options.forEach((_, optIndex) => {
-                    document.getElementById(`label-${index}-${optIndex}`).classList.remove('correct', 'wrong');
+                    const lbl = document.getElementById(`label-${index}-${optIndex}`);
+                    if(lbl) lbl.classList.remove('correct', 'wrong');
                 });
 
                 if (selectedOption) {
@@ -1284,14 +1338,18 @@
                         document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
                     }
                 } else {
-                    // Show correct answer if missed
-                    document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
+                    // Nếu không chọn, hiển thị đáp án đúng
+                    const correctLbl = document.getElementById(`label-${index}-${item.correct}`);
+                    if(correctLbl) correctLbl.classList.add('correct');
                 }
             });
 
             document.getElementById('result').innerText = `Kết quả: Bạn trả lời đúng ${score} / ${quizData.length} câu!`;
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
+
+        // Chạy lần đầu tiên để hiển thị câu hỏi (thứ tự gốc)
+        renderQuiz();
     </script>
 </body>
 </html>
