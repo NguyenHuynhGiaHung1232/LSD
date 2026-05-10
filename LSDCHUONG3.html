@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Lịch sử Đảng - Chương 3</title>
+    <style>
+        /* --- CSS CHO NÚT SWITCH XÁO TRỘN --- */
+        .controls-container { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .switch-label { display: inline-flex; align-items: center; cursor: pointer; font-weight: bold; color: #007bff; user-select: none; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin-right: 10px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; color: #333; }
+        h2 { text-align: center; color: #d9534f; }
+        .quiz-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .question-box { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .question-text { font-weight: bold; margin-bottom: 10px; font-size: 16px; }
+        .option-label { display: block; margin: 8px 0; padding: 10px; background: #fdfdfd; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .option-label:hover { background: #f0f8ff; border-color: #007bff; }
+        .option-label input { margin-right: 10px; cursor: pointer; }
+        .btn-submit { display: block; width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn-submit:hover { background: #218838; }
+        #result { margin-top: 20px; text-align: center; font-size: 22px; font-weight: bold; color: #d9534f; }
+        .correct { background: #d4edda !important; border-color: #c3e6cb !important; color: #155724; font-weight: bold; }
+        .wrong { background: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+
+    <h2>Ôn tập Lịch sử Đảng - Chương 3</h2>
+    <div class="quiz-container">
+        <div class="quiz-container">
+        <!-- Nút bật/tắt xáo trộn thêm vào đây -->
+        <div class="controls-container">
+            <label class="switch-label">
+                <div class="switch">
+                    <input type="checkbox" id="shuffleQuestionsToggle" onchange="toggleShuffleQuestions()">
+                    <span class="slider"></span>
+                </div>
+                <span>Bật/Tắt xáo trộn câu hỏi</span>
+            </label>
+        </div>
+        <div id="quiz"></div>
+        <button class="btn-submit" onclick="checkAnswers()">Nộp bài & Xem điểm</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const quizData = [
+        // Bắt đầu copy từ đây (Câu 1 - 20)
+        {
+            q: "Câu 1. Nhiệm vụ đầu tiên, bức thiết nhất của nước ta sau Đại thắng Mùa Xuân 1975 là gì?",
+            options: [
+                "A. Khôi phục và phát triển kinh tế ở cả hai miền Nam - Bắc.",
+                "B. Hoàn thành thống nhất nước nhà về mặt nhà nước.",
+                "C. Xây dựng chủ nghĩa xã hội trên phạm vi cả nước.",
+                "D. Cải tạo xã hội chủ nghĩa ở miền Nam."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 2. Hội nghị lần thứ 24 Ban Chấp hành Trung ương Đảng khóa III (8/1975) chủ trương đối với miền Bắc là gì?",
+            options: [
+                "A. Nhanh chóng khắc phục hậu quả chiến tranh, chi viện cho miền Nam.",
+                "B. Chuyển hướng nền kinh tế từ thời chiến sang thời bình.",
+                "C. Miền Bắc phải tiếp tục đẩy mạnh sự nghiệp xây dựng CNXH và hoàn thiện quan hệ sản xuất XHCN.",
+                "D. Miền Bắc tạm dừng xây dựng CNXH để tập trung thống nhất đất nước."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 3. Hội nghị lần thứ 24 Ban Chấp hành Trung ương Đảng khóa III (8/1975) chủ trương đối với miền Nam là gì?",
+            options: [
+                "A. Tiến hành đồng thời cải tạo XHCN và xây dựng CNXH.",
+                "B. Chỉ tập trung khôi phục kinh tế, chưa tiến hành cải tạo XHCN.",
+                "C. Duy trì nền kinh tế tư bản chủ nghĩa thêm 5 năm.",
+                "D. Tiến hành ngay lập tức cách mạng ruộng đất triệt để."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 4. Tổ chức tổng tuyển cử trên toàn lãnh thổ Việt Nam bầu ra Quốc hội chung cho cả nước năm 1976 được thực hiện theo nguyên tắc nào?",
+            options: [
+                "A. Thống nhất về mặt lãnh thổ và chính quyền.",
+                "B. Dân chủ tập trung, thiểu số phục tùng đa số.",
+                "C. Phổ thông, bình đẳng, trực tiếp và bỏ phiếu kín.",
+                "D. Hiệp thương chính trị giữa Mặt trận hai miền."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 5. Ngày 25/4/1976, cuộc Tổng tuyển cử bầu Quốc hội chung của nước Việt Nam thống nhất được tiến hành, đã bầu ra 492 đại biểu gồm các thành phần nào?",
+            options: [
+                "A. 132 đại biểu nữ, 127 đại biểu thanh niên, 72 đại biểu dân tộc thiểu số, 29 đại biểu là anh hùng lực lượng vũ trang nhân dân.",
+                "B. Hoàn toàn là đại biểu đại diện cho giai cấp công nhân và nông dân.",
+                "C. Chủ yếu là đại biểu quân đội và các nhân sĩ trí thức yêu nước.",
+                "D. Phân bổ đều cho mỗi tỉnh, thành phố 10 đại biểu không phân biệt thành phần."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 6. Đại hội đại biểu toàn quốc lần thứ IV của Đảng (1976) đã phân tích tình hình thế giới, trong nước và nêu lên mấy đặc điểm lớn của cách mạng Việt Nam trong giai đoạn mới?",
+            options: [
+                "A. 2 đặc điểm lớn.",
+                "B. 3 đặc điểm lớn.",
+                "C. 4 đặc điểm lớn.",
+                "D. 5 đặc điểm lớn."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 7. Đại hội đại biểu toàn quốc lần thứ IV của Đảng (1976) xác định đường lối chung thể hiện nhận thức mới của Đảng về chủ nghĩa xã hội ở nước ta gồm mấy đặc trưng cơ bản?",
+            options: [
+                "A. 3 đặc trưng cơ bản.",
+                "B. 4 đặc trưng cơ bản.",
+                "C. 5 đặc trưng cơ bản.",
+                "D. 6 đặc trưng cơ bản."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 8. Đại hội đại biểu toàn quốc lần thứ IV của Đảng (1976) xác định yếu tố nào được coi là CÔNG CỤ để xây dựng chủ nghĩa xã hội?",
+            options: [
+                "A. Nền kinh tế kế hoạch hóa tập trung.",
+                "B. Chuyên chính vô sản (Nắm vững chuyên chính vô sản).",
+                "C. Quyền làm chủ tập thể của nhân dân lao động.",
+                "D. Liên minh công - nông - trí thức."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 9. Tại Đại hội lần thứ mấy của Đảng, chúng ta vạch ra đường lối công nghiệp hóa xã hội chủ nghĩa trên phạm vi cả nước?",
+            options: [
+                "A. Đại hội III (1960).",
+                "B. Đại hội IV (1976).",
+                "C. Đại hội V (1982).",
+                "D. Đại hội VI (1986)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 10. Đại hội đại biểu toàn quốc lần thứ V (1982) của Đảng xác định nội dung của công nghiệp hóa trong chặng đường đầu tiên là gì?",
+            options: [
+                "A. Ưu tiên phát triển công nghiệp nặng một cách hợp lý.",
+                "B. Đẩy mạnh công nghiệp hóa, hiện đại hóa gắn với phát triển kinh tế tri thức.",
+                "C. Thực hiện 3 chương trình kinh tế lớn: Lương thực, thực phẩm, hàng xuất khẩu.",
+                "D. Lấy nông nghiệp làm mặt trận hàng đầu, ra sức phát triển công nghiệp sản xuất hàng tiêu dùng."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 11. Đại hội V (1982) của Đảng đã bầu ai làm Tổng Bí thư?",
+            options: [
+                "A. Đồng chí Trường Chinh.",
+                "B. Đồng chí Lê Duẩn.",
+                "C. Đồng chí Nguyễn Văn Linh.",
+                "D. Đồng chí Đỗ Mười."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 12. Đại hội VI của Đảng (12/1986) cụ thể hóa nội dung của công nghiệp hóa như thế nào?",
+            options: [
+                "A. Ưu tiên phát triển công nghiệp nặng và công nghiệp quốc phòng.",
+                "B. Lấy nông nghiệp làm mặt trận hàng đầu.",
+                "C. Thực hiện Ba chương trình kinh tế lớn: Lương thực - thực phẩm, Hàng tiêu dùng, Hàng xuất khẩu.",
+                "D. Chuyển sang nền kinh tế thị trường định hướng xã hội chủ nghĩa."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 13. Nhìn lại đất nước ta sau 10 năm đổi mới, Đại hội VIII của Đảng (1996) nhận định như thế nào?",
+            options: [
+                "A. Đất nước vẫn đang chìm sâu trong khủng hoảng kinh tế - xã hội.",
+                "B. Đất nước đã cơ bản trở thành một nước công nghiệp theo hướng hiện đại.",
+                "C. Nước ta đã ra khỏi khủng hoảng kinh tế - xã hội, nhưng một số mặt còn chưa vững chắc.",
+                "D. Chế độ xã hội chủ nghĩa ở Việt Nam đứng trước nguy cơ sụp đổ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 14. Đại hội đại biểu toàn quốc lần thứ VI (1986) của Đảng được triệu tập với tinh thần nổi bật như thế nào?",
+            options: [
+                "A. Kiên định con đường đi lên chủ nghĩa xã hội bằng mọi giá.",
+                "B. Nhìn thẳng vào sự thật, đánh giá đúng sự thật, nói rõ sự thật.",
+                "C. Quyết tâm xóa bỏ hoàn toàn nền kinh tế bao cấp trong 1 năm.",
+                "D. Tập trung cao độ cho nhiệm vụ bảo vệ biên giới Tổ quốc."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 15. Đại hội lần thứ V của Đảng (3/1982) đã xác định cách mạng Việt Nam có hai nhiệm vụ chiến lược. Hai nhiệm vụ đó là gì?",
+            options: [
+                "A. Tiến hành cải tạo XHCN và xây dựng chủ nghĩa xã hội.",
+                "B. Đánh đuổi đế quốc xâm lược và thực hiện người cày có ruộng.",
+                "C. Xây dựng thành công chủ nghĩa xã hội và bảo vệ vững chắc Tổ quốc Việt Nam xã hội chủ nghĩa.",
+                "D. Đẩy mạnh công nghiệp hóa và mở rộng quan hệ đối ngoại."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 16. Đại hội VI (1986) của Đảng xác định đổi mới là xu thế thời đại và đòi hỏi bức thiết của tình hình đất nước. Hãy cho biết xu thế thời đại của giai đoạn này là gì?",
+            options: [
+                "A. Chủ nghĩa tư bản đang chuyển sang giai đoạn độc quyền.",
+                "B. Cuộc cách mạng khoa học - kỹ thuật đang diễn ra mạnh mẽ và sự khủng hoảng, cải tổ của các nước XHCN.",
+                "C. Sự bùng nổ của mạng internet và công nghệ thông tin toàn cầu.",
+                "D. Sự sụp đổ hoàn toàn của trật tự thế giới hai cực Ianta."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 17. Vì sao Đại hội VI (1986) Đảng ta xác định việc đổi mới trở thành đòi hỏi bức thiết của đất nước?",
+            options: [
+                "A. Do áp lực từ các nước phương Tây buộc ta phải đổi mới.",
+                "B. Do nhân dân bãi công, biểu tình yêu cầu thay đổi thể chế.",
+                "C. Do đất nước lâm vào khủng hoảng kinh tế - xã hội trầm trọng, đổi mới là vấn đề có ý nghĩa sống còn.",
+                "D. Do Liên Xô cắt toàn bộ viện trợ kinh tế cho Việt Nam."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 18. Nhận định 'Sự nghiệp giáo dục đào tạo, khoa học công nghệ là quốc sách hàng đầu' được đưa ra tại Đại hội Đảng lần thứ mấy?",
+            options: [
+                "A. Đại hội VI (1986).",
+                "B. Đại hội VII (1991).",
+                "C. Đại hội VIII (1996).",
+                "D. Đại hội IX (2001)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 19. Tại Đại hội VI (1986), Đảng ta đã rút ra 4 bài học kinh nghiệm về xây dựng CNXH ở Việt Nam. Trong đó bài học ĐẦU TIÊN có nội dung gì?",
+            options: [
+                "A. Trong toàn bộ hoạt động của mình, Đảng phải quán triệt tư tưởng 'lấy dân làm gốc'.",
+                "B. Phải luôn xuất phát từ thực tế, tôn trọng và hành động theo quy luật khách quan.",
+                "C. Phải kết hợp sức mạnh dân tộc với sức mạnh thời đại.",
+                "D. Phải xây dựng Đảng ngang tầm nhiệm vụ chính trị."
+            ],
+            correct: 0
+        },
+        {
+            q: "Câu 20. Đại hội VI (1986) của Đảng đã đề ra đường lối đổi mới toàn diện, trong đó trọng tâm là đổi mới về lĩnh vực nào?",
+            options: [
+                "A. Đổi mới về chính trị.",
+                "B. Đổi mới về kinh tế.",
+                "C. Đổi mới về văn hóa.",
+                "D. Đổi mới về hệ thống pháp luật."
+            ],
+            correct: 1
+        },
+        // Bắt đầu copy từ đây (Câu 21 - 50)
+        {
+            q: "Câu 21. Việt Nam và Campuchia ký Hiệp ước hòa bình, hữu nghị và hợp tác vào ngày tháng năm nào?",
+            options: [
+                "A. Ngày 07/01/1979.",
+                "B. Ngày 18/02/1979.",
+                "C. Ngày 20/09/1977.",
+                "D. Ngày 23/10/1991."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 22. Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH được thông qua tại Đại hội Đảng lần thứ mấy?",
+            options: [
+                "A. Đại hội VI (1986).",
+                "B. Đại hội VII (1991).",
+                "C. Đại hội VIII (1996).",
+                "D. Đại hội IX (2001)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 23. Chiến tranh biên giới phía Bắc với Trung Quốc năm 1979 đã diễn ra tại các tỉnh nào của Việt Nam?",
+            options: [
+                "A. Dọc theo tuyến đường Trường Sơn.",
+                "B. Từ Nghệ An đến Quảng Bình.",
+                "C. Tại 6 tỉnh biên giới phía Bắc (Từ Lai Châu đến Quảng Ninh).",
+                "D. Toàn bộ các tỉnh đồng bằng Bắc Bộ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 24. Ngành nào được Đại hội X (2006) của Đảng xác định có tốc độ tăng trưởng cao hơn tốc độ tăng trưởng GDP?",
+            options: [
+                "A. Ngành nông nghiệp.",
+                "B. Ngành công nghiệp nặng.",
+                "C. Ngành công nghiệp khai khoáng.",
+                "D. Ngành dịch vụ."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 25. Chủ đề của Đại hội lần thứ X (2006) là gì?",
+            options: [
+                "A. Đoàn kết - Dân chủ - Kỷ cương - Đổi mới.",
+                "B. Nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng, phát huy sức mạnh toàn dân tộc, đẩy mạnh toàn diện công cuộc đổi mới, sớm đưa nước ta ra khỏi tình trạng kém phát triển.",
+                "C. Tiếp tục đẩy mạnh sự nghiệp công nghiệp hóa, hiện đại hóa đất nước.",
+                "D. Phát huy sức mạnh toàn dân tộc, tiếp tục đổi mới toàn diện."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 26. Đại hội nào của Đảng lần đầu tiên đặt chú trọng hàng đầu đến nhiệm vụ then chốt là xây dựng, chỉnh đốn Đảng (đưa ngay vào tiêu đề Đại hội)?",
+            options: [
+                "A. Đại hội VIII (1996).",
+                "B. Đại hội IX (2001).",
+                "C. Đại hội X (2006).",
+                "D. Đại hội XI (2011)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 27. Hội nghị Trung ương nào của Đảng đã ban hành Chiến lược biển Việt Nam đến năm 2020?",
+            options: [
+                "A. Hội nghị Trung ương 8 khóa IX (2003).",
+                "B. Hội nghị Trung ương 4 khóa X (2007).",
+                "C. Hội nghị Trung ương 6 khóa X (2007).",
+                "D. Hội nghị Trung ương 8 khóa XI (2013)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 28. Trong Hội nghị Trung ương 6 khóa X (8 - 2007) đã ban hành Nghị quyết về xây dựng giai cấp nào trong thời kỳ đẩy mạnh CNH – HĐH đất nước?",
+            options: [
+                "A. Giai cấp nông dân.",
+                "B. Đội ngũ trí thức.",
+                "C. Giai cấp công nhân.",
+                "D. Đội ngũ doanh nhân."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 29. Đại hội Đảng lần thứ X (2006) xác định lĩnh vực nào là nhiệm vụ quan trọng hàng đầu của quá trình CNH – HĐH đất nước?",
+            options: [
+                "A. Phát triển kinh tế tri thức.",
+                "B. Xây dựng nền công nghiệp quốc phòng hiện đại.",
+                "C. Phát triển công nghiệp nặng.",
+                "D. Công nghiệp hóa, hiện đại hóa nông nghiệp, nông thôn."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 30. Ai là người đã ra lệnh Tổng động viên toàn quốc sau khi Việt Nam xảy ra cuộc chiến tranh biên giới với Trung Quốc năm 1979?",
+            options: [
+                "A. Tổng Bí thư Lê Duẩn.",
+                "B. Chủ tịch nước Tôn Đức Thắng.",
+                "C. Thủ tướng Phạm Văn Đồng.",
+                "D. Đại tướng Võ Nguyên Giáp."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 31. Trong Hội nghị Trung ương 4 khóa X (2007) đã sắp xếp bộ máy cơ quan Đảng, Nhà nước ở Trung ương tinh gọn hơn. Theo Hội nghị, Chính phủ có bao nhiêu bộ và cơ quan ngang bộ?",
+            options: [
+                "A. 18 bộ và cơ quan ngang bộ.",
+                "B. 20 bộ và cơ quan ngang bộ.",
+                "C. 22 bộ và cơ quan ngang bộ.",
+                "D. 26 bộ và cơ quan ngang bộ."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 32. Trong Cương lĩnh năm 1991 đã nêu lên có bao nhiêu phương hướng lớn về xây dựng CNXH ở nước ta?",
+            options: [
+                "A. 5 phương hướng lớn.",
+                "B. 6 phương hướng lớn.",
+                "C. 7 phương hướng lớn.",
+                "D. 8 phương hướng lớn."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 33. Khái niệm “Hệ thống chính trị” được ghi nhận chính thức trong Hiến pháp nào của nước ta?",
+            options: [
+                "A. Hiến pháp 1959.",
+                "B. Hiến pháp 1980.",
+                "C. Hiến pháp 1992.",
+                "D. Hiến pháp 2013."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 34. Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (năm 1991) xác định có bao nhiêu đặc trưng về xây dựng CNXH ở nước ta?",
+            options: [
+                "A. 5 đặc trưng.",
+                "B. 6 đặc trưng.",
+                "C. 7 đặc trưng.",
+                "D. 8 đặc trưng."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 35. Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (năm 1991) khẳng định nội dung nào trong các câu sau đây?",
+            options: [
+                "A. Chấp nhận đa nguyên chính trị, đa đảng đối lập.",
+                "B. Xóa bỏ hoàn toàn nền kinh tế hàng hóa nhiều thành phần.",
+                "C. Đi lên chủ nghĩa xã hội là sự lựa chọn duy nhất đúng đắn của cách mạng Việt Nam.",
+                "D. Đảng lấy chủ nghĩa Mác - Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam cho hành động."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 36. Tại Đại hội VII (1991), Đảng ta khẳng định phương hướng xây dựng nhà nước pháp quyền Việt Nam là của ai?",
+            options: [
+                "A. Của giai cấp công nhân và nông dân.",
+                "B. Của nhân dân, do nhân dân, vì nhân dân.",
+                "C. Của khối đại đoàn kết toàn dân tộc.",
+                "D. Của toàn thể nhân dân lao động."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 37. Trong quan hệ đối ngoại, Việt Nam và Trung Quốc bắt đầu bình thường hóa quan hệ vào năm nào?",
+            options: [
+                "A. Năm 1989.",
+                "B. Năm 1991.",
+                "C. Năm 1994.",
+                "D. Năm 1995."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 38. Quan điểm cho rằng: “Đi lên CNXH là sự lựa chọn duy nhất đúng đắn của cách mạng Việt Nam” được Đảng ta nêu lên trong Đại hội mấy?",
+            options: [
+                "A. Đại hội VI (1986).",
+                "B. Đại hội VII (1991).",
+                "C. Đại hội VIII (1996).",
+                "D. Đại hội IX (2001)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 39. Đại hội nào đã lần đầu tiên thông qua nội dung về văn hóa Việt Nam có đặc trưng: Tiên tiến, đậm đà bản sắc dân tộc?",
+            options: [
+                "A. Đại hội VI (1986).",
+                "B. Đại hội VII (1991 - Thông qua Cương lĩnh 1991).",
+                "C. Đại hội VIII (1996).",
+                "D. Đại hội IX (2001)."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 40. Theo sự chỉ đạo chuẩn bị của Trung ương Đảng, ngày 29 – 05 – 2008, Quốc Hội khóa XII đã ra Nghị quyết về điều chỉnh địa giới hành chính đối với thành phố nào dưới đây?",
+            options: [
+                "A. Thành phố Hải Phòng.",
+                "B. Thành phố Đà Nẵng.",
+                "C. Thành phố Hà Nội (Sáp nhập tỉnh Hà Tây vào Hà Nội).",
+                "D. Thành phố Hồ Chí Minh."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 41. Đại hội nào của Đảng được đánh giá là Đại hội “Đoàn kết – Dân chủ - Kỷ cương – Đổi mới”?",
+            options: [
+                "A. Đại hội X (2006).",
+                "B. Đại hội XI (2011).",
+                "C. Đại hội XII (2016).",
+                "D. Đại hội XIII (2021)."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 42. Đối với công tác nghiên cứu tư tưởng Hồ Chí Minh, ngày 27- 3-2003, Ban Bí thư đã thông qua Chỉ thị nào dưới đây?",
+            options: [
+                "A. Chỉ thị số 05-CT/TW.",
+                "B. Chỉ thị số 06-CT/TW.",
+                "C. Chỉ thị số 23-CT/TW.",
+                "D. Chỉ thị số 34-CT/TW."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 43. Hội nghị Trung ương 7 khóa X (2008) đã đưa ra quan điểm xác định trí thức Việt Nam là lực lượng như thế nào?",
+            options: [
+                "A. Là giai cấp lãnh đạo cách mạng Việt Nam.",
+                "B. Là lực lượng nòng cốt trong khối liên minh công nông.",
+                "C. Là thanh niên rường cột của nước nhà.",
+                "D. Là lực lượng lao động sáng tạo đặc biệt quan trọng trong tiến trình đẩy mạnh CNH, HĐH đất nước."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 44. Sau khi Việt Nam gia nhập WTO, Đảng ta đã thông qua Hội nghị Trung ương 4 (2007) về một số chủ trương, chính sách, quan điểm lớn phát triển kinh tế Việt Nam sau khi trở thành thành viên WTO. Hãy cho biết đó là những quan điểm gì?",
+            options: [
+                "A. Đóng cửa nền kinh tế để bảo hộ sản xuất trong nước.",
+                "B. Chủ động hội nhập, phát huy tối đa nội lực, tranh thủ ngoại lực để phát triển nhanh và bền vững.",
+                "C. Chỉ ưu tiên phát triển kinh tế nhà nước, hạn chế tư nhân.",
+                "D. Chuyển hoàn toàn sang nền kinh tế tư bản chủ nghĩa."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 45. Hội nghị đại biểu toàn quốc giữa nhiệm kỳ của Đảng tổ chức năm 1994 đã chỉ ra những thách thức lớn đối với cách mạng Việt Nam. Hãy cho biết đó là những thách thức gì?",
+            options: [
+                "A. Nguy cơ lạm phát và khủng hoảng kinh tế toàn cầu.",
+                "B. Sự chống phá của tàn quân Fulro và các đảng phái phản động.",
+                "C. 4 nguy cơ: Tụt hậu xa hơn về kinh tế; chệch hướng XHCN; nạn tham nhũng quan liêu; diễn biến hòa bình.",
+                "D. Nguy cơ suy thoái môi trường và cạn kiệt tài nguyên thiên nhiên."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 46. Hội nghị Trung ương 8 (11- 2013) đã ra Nghị quyết “Về đổi mới căn bản, toàn diện giáo dục và đào tạo, đáp ứng yêu cầu CNH, HĐH trong điều kiện...” như thế nào?",
+            options: [
+                "A. Trong điều kiện thời kỳ đổi mới và mở cửa.",
+                "B. Trong điều kiện kinh tế thị trường định hướng xã hội chủ nghĩa và hội nhập quốc tế.",
+                "C. Trong điều kiện cách mạng công nghiệp 4.0 bùng nổ.",
+                "D. Trong điều kiện giữ vững an ninh quốc phòng."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 47. Năm 1988, Luật nào đã được thông qua tạo cơ sở pháp lý cho hoạt động đầu tư trực tiếp nước ngoài vào Việt Nam?",
+            options: [
+                "A. Luật Doanh nghiệp tư nhân.",
+                "B. Luật Thương mại.",
+                "C. Luật Đất đai sửa đổi.",
+                "D. Luật Đầu tư nước ngoài tại Việt Nam."
+            ],
+            correct: 3
+        },
+        {
+            q: "Câu 48. Hội nghị Trung ương 7, khóa X (7-2008) đã ban hành Nghị quyết về xây dựng đội ngũ trí thức trong thời kỳ đẩy mạnh công nghiệp hoá, hiện đại hoá đất nước và hội nhập kinh tế quốc tế. Quan điểm của Đảng xác định trí thức Việt Nam là lực lượng như thế nào?",
+            options: [
+                "A. Là đội tiên phong của giai cấp công nhân.",
+                "B. Là lực lượng nòng cốt bảo vệ an ninh quốc gia.",
+                "C. Là lực lượng lao động sáng tạo đặc biệt quan trọng.",
+                "D. Là nền tảng tư tưởng của Đảng."
+            ],
+            correct: 2
+        },
+        {
+            q: "Câu 49. Mục đích của cuộc vận động “Học tập và làm theo tấm gương đạo đức Hồ Chí Minh” được Đảng ta đề ra trong tháng 11/2006 là gì?",
+            options: [
+                "A. Thay thế hoàn toàn việc học tập Chủ nghĩa Mác - Lênin.",
+                "B. Nâng cao đạo đức cách mạng, đẩy lùi sự suy thoái về tư tưởng chính trị, đạo đức, lối sống và các tệ nạn xã hội.",
+                "C. Để tiến hành một cuộc thanh lọc cán bộ trên diện rộng.",
+                "D. Xóa bỏ hoàn toàn tình trạng mù chữ ở vùng sâu vùng xa."
+            ],
+            correct: 1
+        },
+        {
+            q: "Câu 50. Trong Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (bổ sung, phát triển năm 2011) đã nêu lên mục tiêu tổng quát về xây dựng CNXH ở Việt Nam như thế nào?",
+            options: [
+                "A. Dân giàu, nước mạnh, xã hội công bằng, văn minh.",
+                "B. Dân giàu, nước mạnh, dân chủ, công bằng, văn minh.",
+                "C. Xây dựng một nước Việt Nam hòa bình, thống nhất, độc lập, dân chủ.",
+                "D. Tiến nhanh, tiến mạnh, tiến vững chắc lên chủ nghĩa xã hội."
+            ],
+            correct: 1
+        }
+        // Kết thúc copy
+        ];
+        // ... (mảng quizData của bạn ở trên) ...
+        // ]; <-- Tìm đến vị trí này
+
+        // === THÊM ĐOẠN CODE NÀY VÀO ĐỂ ĐẢO ĐÁP ÁN ===
+        
+        // Thuật toán đảo mảng ngẫu nhiên (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Xử lý đảo đáp án cho toàn bộ câu hỏi
+        quizData.forEach(item => {
+            // 1. Tách nội dung và ghi nhớ đáp án đúng hiện tại
+            let tempOptions = item.options.map((opt, idx) => {
+                // Dùng Regex xóa các tiền tố "A. ", "B. ", "C. ", "D. " cũ
+                let cleanText = opt.replace(/^[A-D]\.\s*/, ""); 
+                return { 
+                    text: cleanText, 
+                    isCorrect: idx === item.correct // Lưu lại cờ nhận diện đáp án đúng
+                };
+            });
+
+            // 2. Tiến hành đảo lộn ngẫu nhiên vị trí các câu trả lời
+            shuffleArray(tempOptions);
+
+            // 3. Gắn lại chữ cái A, B, C, D theo thứ tự mới và cập nhật dữ liệu
+            const labels = ["A. ", "B. ", "C. ", "D. "];
+            item.options = tempOptions.map((opt, idx) => labels[idx] + opt.text);
+            
+            // 4. Cập nhật lại chỉ mục (index) của đáp án đúng sau khi đã đảo
+            item.correct = tempOptions.findIndex(opt => opt.isCorrect);
+        });
+
+        // === KẾT THÚC ĐOẠN CODE ĐẢO ĐÁP ÁN ===
+
+        const quizContainer = document.getElementById('quiz');
+        
+        // Mảng lưu trữ thứ tự câu hỏi (mặc định là 0, 1, 2, 3...)
+        let questionOrder = Array.from(quizData.keys()); 
+
+        // Hàm vẽ danh sách câu hỏi ra màn hình
+        function renderQuiz() {
+            quizContainer.innerHTML = ''; // Xóa sạch nội dung cũ
+            
+            questionOrder.forEach((qIndex) => {
+                const item = quizData[qIndex];
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-box';
+                
+                let optionsHTML = '';
+                item.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <label class="option-label" id="label-${qIndex}-${optIndex}">
+                            <input type="radio" name="q${qIndex}" value="${optIndex}">
+                            ${opt}
+                        </label>
+                    `;
+                });
+
+                questionDiv.innerHTML = `
+                    <div class="question-text">${item.q}</div>
+                    <div class="options" id="options-${qIndex}">
+                        ${optionsHTML}
+                    </div>
+                `;
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        // Hàm xử lý khi ấn nút công tắc
+        function toggleShuffleQuestions() {
+            const isShuffled = document.getElementById('shuffleQuestionsToggle').checked;
+            
+            if (isShuffled) {
+                // Nếu BẬT: Xáo trộn mảng thứ tự
+                shuffleArray(questionOrder);
+            } else {
+                // Nếu TẮT: Khôi phục lại thứ tự gốc (0 -> 115)
+                questionOrder = Array.from(quizData.keys());
+            }
+            
+            // Xóa điểm số cũ đi (nếu đang xem điểm mà bấm xáo trộn)
+            document.getElementById('result').innerText = '';
+            
+            // Vẽ lại toàn bộ câu hỏi theo thứ tự mới
+            renderQuiz();
+        }
+
+        // --- Hàm chấm điểm (Giữ nguyên logic cũ) ---
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                
+                // Xóa định dạng đúng/sai cũ
+                item.options.forEach((_, optIndex) => {
+                    const lbl = document.getElementById(`label-${index}-${optIndex}`);
+                    if(lbl) lbl.classList.remove('correct', 'wrong');
+                });
+
+                if (selectedOption) {
+                    const selectedValue = parseInt(selectedOption.value);
+                    if (selectedValue === item.correct) {
+                        score++;
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('correct');
+                    } else {
+                        document.getElementById(`label-${index}-${selectedValue}`).classList.add('wrong');
+                        document.getElementById(`label-${index}-${item.correct}`).classList.add('correct');
+                    }
+                } else {
+                    // Nếu không chọn, hiển thị đáp án đúng
+                    const correctLbl = document.getElementById(`label-${index}-${item.correct}`);
+                    if(correctLbl) correctLbl.classList.add('correct');
+                }
+            });
+
+            document.getElementById('result').innerText = `Kết quả: Bạn trả lời đúng ${score} / ${quizData.length} câu!`;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Chạy lần đầu tiên để hiển thị câu hỏi (thứ tự gốc)
+        renderQuiz();
+    </script>
+</body>
+</html>
