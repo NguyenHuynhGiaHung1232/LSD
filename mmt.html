@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra: Thực Hành Mạng Máy Tính</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #e1e4e8;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --hover-color: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Thanh công cụ gắn chặt trên cùng (Sticky Header) */
+        .header {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        /* Nút Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input { display: none; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        /* Vùng chứa các câu hỏi */
+        .quiz-container {
+            max-width: 800px;
+            margin: 30px auto 100px auto;
+            padding: 0 20px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+
+        .option-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff;
+            font-weight: 500;
+        }
+
+        /* Trạng thái sau khi nộp bài */
+        .option-item.correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+            font-weight: bold;
+        }
+
+        .option-item.wrong {
+            background-color: var(--wrong-color);
+            color: white;
+            border-color: var(--wrong-color);
+        }
+        
+        .option-item.disabled {
+            pointer-events: none; /* Khóa không cho bấm sau khi nộp */
+        }
+
+        /* Thanh nộp bài gắn dưới đáy */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .btn-submit {
+            background-color: var(--correct-color);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover { background-color: #218838; }
+        
+        .btn-reset {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Ẩn đi, chỉ hiện khi đã nộp bài */
+        }
+
+        #result-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 20px;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Thực hành mạng máy tính (120 Câu)</h1>
+        <div class="controls">
+            <label for="shuffleToggle">Xáo trộn câu hỏi</label>
+            <label class="switch">
+                <input type="checkbox" id="shuffleToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="quiz-container" id="quiz-container">
+        </div>
+
+    <div class="footer">
+        <span id="result-text">Điểm của bạn: 0 / 0</span>
+        <button class="btn-submit" id="submit-btn" onclick="submitQuiz()">Nộp Bài</button>
+        <button class="btn-reset" id="reset-btn" onclick="resetQuiz()">Làm lại bài mới</button>
+    </div>
+
+    <script>
+        // DỮ LIỆU CÂU HỎI (Bạn dán toàn bộ 120 câu vào mảng này)
+        const rawQuestions = [
+            {
+                question: "Lệnh nào sau đây được sử dụng phổ biến nhất trong cửa sổ Command Prompt (CMD) để kiểm tra kết nối mạng ở tầng mạng giữa hai máy tính?",
+                options: ["A. ipconfig", "B. ping", "C. netstat", "D. nslookup"],
+                correctAnswer: 1 // Vị trí 1 tương ứng với đáp án "B. ping"
+            },
+            {
+                question: "Khi truy cập trang web https://google.com qua trình duyệt Chrome, giao thức HTTPS sẽ hoạt động trực tiếp ở tầng nào của mô hình OSI?",
+                options: ["A. Tầng Mạng (Network)", "B. Tầng Vận chuyển (Transport)", "C. Tầng Ứng dụng (Application)", "D. Tầng Liên kết dữ liệu (Data Link)"],
+                correctAnswer: 2
+            },
+            {
+                question: "Trong mô hình mạng Client-Server, đặc điểm nào sau đây mô tả đúng nhất về vai trò của một Máy trạm (Client)?",
+                options: ["A. Luôn luôn lắng nghe các yêu cầu từ mạng.", "B. Cung cấp các dịch vụ dùng chung như DNS, Web, Mail.", "C. Chủ động gửi yêu cầu dịch vụ và chờ phản hồi từ Máy chủ.", "D. Quản lý việc cấp phát địa chỉ IP cho toàn mạng."],
+                correctAnswer: 2
+            },
+            {
+                question: "Đồ hình mạng (Topology) nào kết nối tất cả các thiết bị vào một trục cáp chính (Bus) duy nhất và sử dụng các terminator ở hai đầu cáp?",
+                options: ["A. Star Topology", "B. Bus Topology", "C. Ring Topology", "D. Mesh Topology"],
+                correctAnswer: 1
+            },
+            {
+                question: "Trong phòng thực hành mạng LAN sử dụng cấu trúc hình sao (Star), nếu thiết bị trung tâm (Switch) bị hỏng hoàn toàn thì điều gì sẽ xảy ra?",
+                options: ["A. Chỉ có máy chủ bị mất kết nối.", "B. Toàn bộ các máy tính trong mạng mạng LAN đó không thể kết nối với nhau.", "C. Các máy tính vẫn liên lạc được qua cơ chế dự phòng.", "D. Chỉ mạng không dây bị ảnh hưởng."],
+                correctAnswer: 1
+            },
+            {
+                question: "Mô hình kiến trúc mạng nào cho phép mỗi máy tính vừa đóng vai trò là Client, vừa đóng vai trò là Server?",
+                options: ["A. Client - Server", "B. Peer-to-Peer (Ngang hàng)", "C. Centralized (Tập trung)", "D. Cloud Computing"],
+                correctAnswer: 1
+            },
+            {
+                question: "Quá trình đóng gói dữ liệu (Encapsulation) khi truyền qua mạng máy tính được thực hiện theo thứ tự tầng nào sau đây?",
+                options: ["A. Từ tầng Vật lý lên tầng Ứng dụng.", "B. Từ tầng Ứng dụng xuống tầng Vật lý.", "C. Từ tầng Mạng sang tầng Vận chuyển.", "D. Từ tầng Liên kết dữ liệu lên tầng Mạng."],
+                correctAnswer: 1
+            },
+            {
+                question: "Đơn vị dữ liệu (PDU) tại tầng Vận chuyển (Transport Layer) trong bộ giao thức TCP/IP được gọi là gì?",
+                options: ["A. Bit", "B. Frame (Khung)", "C. Packet (Gói tin)", "D. Segment / Datagram"],
+                correctAnswer: 3
+            },
+            {
+                question: "Gói tin (Packet) là tên gọi đơn vị dữ liệu tương ứng với tầng nào trong mô hình tham chiếu OSI?",
+                options: ["A. Tầng 2 - Data Link", "B. Tầng 3 - Network", "C. Tầng 4 - Transport", "D. Tầng 7 - Application"],
+                correctAnswer: 1
+            },
+            {
+                question: "Khi quan sát một khung dữ liệu (Frame) trong phần mềm Wireshark, PDU này thuộc quyền quản lý của tầng nào?",
+                options: ["A. Tầng Vật lý", "B. Tầng Liên kết dữ liệu", "C. Tầng Phiên", "D. Tầng Trình diễn"],
+                correctAnswer: 1
+            },
+            {
+                question: "Tầng nào trong mô hình OSI chịu trách nhiệm định dạng dữ liệu, nén dữ liệu và mã hóa ký tự (như ASCII, SSL/TLS) trước khi truyền?",
+                options: ["A. Tầng Ứng dụng", "B. Tầng Trình diễn (Presentation)", "C. Tầng Phiên (Session)", "D. Tầng Vận chuyển"],
+                correctAnswer: 1
+            },
+            {
+                question: "Chức năng thiết lập, quản lý, duy trì và đồng bộ hóa các phiên hội thoại (cuộc gọi, truyền file) giữa hai ứng dụng thuộc về tầng nào?",
+                options: ["A. Session Layer", "B. Transport Layer", "C. Network Layer", "D. Data Link Layer"],
+                correctAnswer: 0
+            },
+            {
+                question: "Kiểm soát luồng (Flow Control) và kiểm soát lỗi (Error Control) trên toàn tuyến từ đầu cuối đến đầu cuối (End-to-End) là nhiệm vụ của tầng nào?",
+                options: ["A. Tầng Vật lý", "B. Tầng Liên kết dữ liệu", "C. Tầng Vận chuyển", "D. Tầng Mạng"],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi xảy ra hiện tượng mất gói tin trên đường truyền không tin cậy, tầng nào có nhiệm vụ yêu cầu truyền lại dữ liệu (Re-transmission) trong TCP/IP?",
+                options: ["A. Tầng Mạng", "B. Tầng Vận chuyển (với giao thức TCP)", "C. Tầng Vật lý", "D. Tầng Ứng dụng"],
+                correctAnswer: 1
+            },
+            {
+                question: "Các thiết bị truyền dẫn vật lý như cáp xoắn đôi Cat6, cáp quang Single-mode hoạt động và truyền tín hiệu dạng bit ở tầng nào?",
+                options: ["A. Data Link Layer", "B. Network Layer", "C. Physical Layer", "D. Transport Layer"],
+                correctAnswer: 2
+            },
+            {
+                question: "Việc lựa chọn đường đi tốt nhất (Routing) dựa trên địa chỉ logic để chuyển tiếp dữ liệu qua các mạng khác nhau do tầng nào đảm nhiệm?",
+                options: ["A. Tầng 2 - Data Link", "B. Tầng 3 - Network", "C. Tầng 4 - Transport", "D. Tầng 5 - Session"],
+                correctAnswer: 1
+            },
+            {
+                question: "Thuật ngữ 'Half-Duplex' (Bán song công) dùng để chỉ phương thức truyền thông nào sau đây trong thực tế?",
+                options: ["A. Dữ liệu chỉ có thể truyền theo một chiều duy nhất.", "B. Dữ liệu có thể truyền theo cả hai chiều tại cùng một thời điểm.", "C. Dữ liệu có thể truyền theo hai chiều, nhưng tại một thời điểm chỉ có một bên được truyền.", "D. Dữ liệu không thể truyền qua dây cáp vật lý."],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi dữ liệu đi từ tầng Mạng xuống tầng Liên kết dữ liệu, thông tin nào sau đây sẽ được đóng gói thêm vào phần đầu (Header) của Frame?",
+                options: ["A. Địa chỉ IP nguồn và IP đích.", "B. Địa chỉ MAC nguồn và MAC đích.", "C. Số hiệu cổng (Port) nguồn và đích.", "D. Số thứ tự gói tin (Sequence number)."],
+                correctAnswer: 1
+            },
+            {
+                question: "Kiến trúc đồ hình mạng nào (Mesh Topology) yêu cầu tất cả các nút mạng phải có liên kết trực tiếp 'point-to-point' đến mọi nút mạng khác?",
+                options: ["A. Mesh hoàn toàn (Full Mesh)", "B. Mesh từng phần (Partial Mesh)", "C. Star-Bus", "D. Extended Star"],
+                correctAnswer: 0
+            },
+            {
+                question: "Lệnh nào trên Linux/Ubuntu tương đương với lệnh ipconfig /all trên Windows dùng để xem thông tin chi tiết các tầng mạng bên dưới?",
+                options: ["A. ping -a", "B. ifconfig hoặc ip a", "C. netstat -r", "D. traceroute"],
+                correctAnswer: 1
+            },
+            {
+                question: "Thiết bị mạng Hub hoạt động ở tầng nào của mô hình OSI và xử lý dữ liệu dưới dạng gì?",
+                options: ["A. Tầng 2 - Khung dữ liệu (Frame)", "B. Tầng 1 - Tín hiệu vật lý (Bit)", "C. Tầng 3 - Gói tin (Packet)", "D. Tầng 4 - Phân đoạn (Segment)"],
+                correctAnswer: 1
+            },
+            {
+                question: "Khi thiết bị Hub nhận được một tín hiệu điện từ một máy tính gửi đến cổng số 1, nó sẽ xử lý như thế nào?",
+                options: ["A. Đọc địa chỉ MAC đích rồi gửi thẳng đến cổng có máy đích.", "B. Phát tán (Broadcast) tín hiệu đó ra tất cả các cổng còn lại (trừ cổng 1).", "C. Gửi tín hiệu đến máy chủ dịch vụ để phân tích.", "D. Hủy tín hiệu nếu không biết địa chỉ IP."],
+                correctAnswer: 1
+            },
+            {
+                question: "Thiết bị Switch Layer 2 hoạt động chủ yếu ở tầng nào của mô hình OSI?",
+                options: ["A. Tầng Vật lý", "B. Tầng Liên kết dữ liệu", "C. Tầng Mạng", "D. Tầng Vận chuyển"],
+                correctAnswer: 1
+            },
+            {
+                question: "Để chuyển tiếp các khung dữ liệu một cách chính xác và không gây xung đột, Switch sử dụng bảng tra cứu nào?",
+                options: ["A. Bảng định tuyến (Routing Table)", "B. Bảng địa chỉ MAC (MAC Address Table / CAM Table)", "C. Bảng phân giải địa chỉ ARP (ARP Cache)", "D. Bảng danh sách tài khoản người dùng"],
+                correctAnswer: 1
+            },
+            {
+                question: "Cơ chế 'học' địa chỉ MAC của Switch dựa trên trường thông tin nào trong khung Ethernet nhận được?",
+                options: ["A. Source MAC Address (Địa chỉ MAC nguồn)", "B. Destination MAC Address (Địa chỉ MAC đích)", "C. Source IP Address (Địa chỉ IP nguồn)", "D. EtherType"],
+                correctAnswer: 0
+            },
+            {
+                question: "Khi Switch nhận được một Frame có địa chỉ MAC đích là FF:FF:FF:FF:FF:FF, nó sẽ thực hiện hành động nào?",
+                options: ["A. Hủy bỏ Frame đó ngay lập tức.", "B. Chỉ gửi đến máy chủ quản trị.", "C. Chuyển tiếp (Flooding) ra tất cả các cổng đang hoạt động trừ cổng nhận vào.", "D. Gửi trả lại cho máy nguồn."],
+                correctAnswer: 2
+            },
+            {
+                question: "Thiết bị nào sau đây có chức năng chính là kết nối các mạng LAN khác nhau và định tuyến gói tin giữa các mạng IP?",
+                options: ["A. Repeater", "B. Switch Layer 2", "C. Router", "D. Access Point"],
+                correctAnswer: 2
+            },
+            {
+                question: "Router đưa ra quyết định chuyển tiếp một gói tin (Packet) đi ra cổng nào dựa vào thông tin gì?",
+                options: ["A. Địa chỉ MAC nguồn", "B. Địa chỉ IP đích cấu hình trong gói tin và Bảng định tuyến", "C. Số hiệu cổng dịch vụ (Port number)", "D. Tên miền của trang web cần truy cập"],
+                correctAnswer: 1
+            },
+            {
+                question: "Địa chỉ MAC (Địa chỉ vật lý) ghi trên card mạng (NIC) có độ dài bao nhiêu bit và được biểu diễn ở hệ số nào?",
+                options: ["A. 32 bit, hệ thập phân", "B. 48 bit, hệ thập lục phân (Hexadecimal)", "C. 64 bit, hệ nhị phân", "D. 128 bit, hệ thập lục phân"],
+                correctAnswer: 1
+            },
+            {
+                question: "Chuẩn IEEE nào định nghĩa các đặc tính kỹ thuật cho công nghệ mạng mạng Ethernet có dây truyền thống?",
+                options: ["A. IEEE 802.11", "B. IEEE 802.3", "C. IEEE 802.15", "D. IEEE 802.1X"],
+                correctAnswer: 1
+            },
+            {
+                question: "Cơ chế đa truy cập nhận biết sóng mang phát hiện xung đột (CSMA/CD) được sử dụng phổ biến trong môi trường nào?",
+                options: ["A. Mạng Token Ring", "B. Mạng Ethernet cấu hình dùng Hub chung miền xung đột (Collision Domain)", "C. Mạng Wi-Fi không dây", "D. Mạng cáp quang diện rộng"],
+                correctAnswer: 1
+            },
+            {
+                question: "Kích thước tối thiểu (Minimum Frame Size) của một khung dữ liệu Ethernet tiêu chuẩn để đảm bảo cơ chế phát hiện xung đột hoạt động ổn định là bao nhiêu bytes?",
+                options: ["A. 46 bytes", "B. 64 bytes", "C. 1500 bytes", "D. 1518 bytes"],
+                correctAnswer: 1
+            },
+            {
+                question: "Mạng LAN vô tuyến (WLAN / Wi-Fi) hoạt động dựa trên tập chuẩn kỹ thuật nào của tổ chức IEEE?",
+                options: ["A. IEEE 802.3", "B. IEEE 802.5", "C. IEEE 802.11", "D. IEEE 802.16"],
+                correctAnswer: 2
+            },
+            {
+                question: "Do không thể vừa phát tín hiệu vừa phát hiện xung đột trên môi trường truyền dẫn vô tuyến, mạng Wi-Fi sử dụng cơ chế nào?",
+                options: ["A. CSMA/CD", "B. CSMA/CA (Tránh xung đột)", "C. Token Passing", "D. Polling"],
+                correctAnswer: 1
+            },
+            {
+                question: "Thuật ngữ 'SSID' khi bạn cấu hình một thiết bị Access Point trong thực tế đại diện cho thành phần nào?",
+                options: ["A. Mật khẩu bảo mật mã hóa của mạng Wi-Fi.", "B. Địa chỉ IP quản trị của thiết bị Access Point.", "C. Tên định danh của mạng không dây hiển thị cho thiết bị dò tìm.", "D. Số lượng kênh tần số khả dụng."],
+                correctAnswer: 2
+            },
+            {
+                question: "Chế độ mạng không dây nào (WLAN Topology) cho phép các máy tính kết nối trực tiếp với nhau độc lập mà không cần thông qua thiết bị trung tâm Access Point?",
+                options: ["A. Infrastructure Mode", "B. Ad-hoc Mode (Independent Basic Service Set - IBSS)", "C. WDS Mesh Mode", "D. Roaming Mode"],
+                correctAnswer: 1
+            },
+            {
+                question: "Khi bấm đầu mạng chuẩn RJ-45 sử dụng cáp xoắn đôi, nếu thực hiện bấm cả 2 đầu cáp theo cùng một chuẩn T568B thì ta thu được loại cáp nào?",
+                options: ["A. Cáp chéo (Crossover Cable)", "B. Cáp thẳng (Straight-through Cable)", "C. Cáp Console (Rollover Cable)", "D. Cáp đồng trục"],
+                correctAnswer: 1
+            },
+            {
+                question: "Trong thực tế, để kết nối từ card mạng của một máy tính (PC) trực tiếp vào một cổng mạng của Router (không hỗ trợ tính năng tự động chuyển đổi cổng Auto-MDIX), ta phải dùng loại cáp nào?",
+                options: ["A. Cáp thẳng", "B. Cáp chéo", "C. Cáp sợi quang", "D. Cáp điện thoại"],
+                correctAnswer: 1
+            },
+            {
+                question: "Khi kết nối PC vào cổng Ethernet tiêu chuẩn trên Switch Layer 2, loại cáp nào sau đây là phù hợp nhất?",
+                options: ["A. Cáp chéo", "B. Cáp thẳng", "C. Cáp Console", "D. Cáp Đồng trục gầy"],
+                correctAnswer: 1
+            },
+            {
+                question: "Để thực hiện cấu hình ban đầu cho một thiết bị Switch hoặc Router Cisco mới xuất xưởng qua phần mềm Putty hoặc SecureCRT, ta kết nối máy tính với cổng nào trên thiết bị?",
+                options: ["A. Cổng AUX", "B. Cổng Console", "C. Cổng GiagabitEthernet 0/1", "D. Cổng FastEthernet 0/0"],
+                correctAnswer: 1
+            },
+            {
+                question: "Chuẩn bảo mật không dây nào sau đây cung cấp thuật toán mã hóa mạnh mẽ và an toàn nhất cho cấu hình mạng WLAN cá nhân hiện nay?",
+                options: ["A. WEP", "B. WPA", "C. WPA2", "D. WPA3"],
+                correctAnswer: 3
+            },
+            {
+                question: "Thiết bị Repeater hoạt động ở tầng 1 (Physical) dùng để giải quyết vấn đề kỹ thuật nào sau đây trong truyền dẫn mạng?",
+                options: ["A. Phân chia mạng con.", "B. Khuếch đại và định hình lại tín hiệu bị suy hao do khoảng cách truyền xa.", "C. Chuyển đổi định dạng tệp tin mã hóa.", "D. Ngăn chặn các cuộc tấn công DDoS."],
+                correctAnswer: 1
+            },
+            {
+                question: "Thiết bị Bridge (Cầu nối) truyền thống dùng để làm gì?",
+                options: ["A. Kết nối các mạng sử dụng các bộ giao thức khác hoàn toàn nhau như IP và IPX.", "B. Chia nhỏ một miền xung đột (Collision Domain) lớn thành hai miền xung đột nhỏ hơn.", "C. Cấp phát IP tự động cho máy trạm.", "D. Thay thế hoàn toàn cho thiết bị Router."],
+                correctAnswer: 1
+            },
+            {
+                question: "Sự khác biệt cốt lõi giữa Switch Layer 3 và Switch Layer 2 thông thường là gì?",
+                options: ["A. Switch Layer 3 hỗ trợ nhiều cổng kết nối hơn.", "B. Switch Layer 3 có tích hợp phần cứng và hệ điều hành để thực hiện định tuyến gói tin giữa các mạng IP.", "C. Switch Layer 3 chỉ chạy được cáp quang.", "D. Switch Layer 2 không cần cấp nguồn điện khi chạy."],
+                correctAnswer: 1
+            },
+            {
+                question: "Miền quảng bá (Broadcast Domain) được giới hạn (không cho đi qua) bởi thiết bị mạng nào sau đây?",
+                options: ["A. Hub", "B. Switch Layer 2", "C. Router", "D. Repeater"],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi cấu hình dải tần số Wi-Fi 2.4 GHz, các kênh (Channels) nào sau đây hoàn toàn không chồng lấn (non-overlapping) lên nhau?",
+                options: ["A. 1, 2, 3", "B. 1, 6, 11", "C. 5, 6, 7", "D. 11, 12, 13"],
+                correctAnswer: 1
+            },
+            {
+                question: "Chức năng chính của một Máy chủ tệp tin (File Server) triển khai trên Windows Server trong mạng nội bộ doanh nghiệp là gì?",
+                options: ["A. Phân giải địa chỉ URL thành địa chỉ IP mạng.", "B. Lưu trữ dữ liệu tập trung và quản lý quyền truy cập tệp tin của người dùng.", "C. Bảo vệ mạng trước các mã độc tấn công từ Internet.", "D. Tạo kết nối không dây cho các thiết bị di động."],
+                correctAnswer: 1
+            },
+            {
+                question: "Công nghệ Fast Ethernet có tốc độ truyền dữ liệu tối đa trên lý thuyết là bao nhiêu?",
+                options: ["A. 10 Mbps", "B. 100 Mbps", "C. 1000 Mbps", "D. 10 Gbps"],
+                correctAnswer: 1
+            },
+            {
+                question: "Công nghệ Gigabit Ethernet chạy theo chuẩn IEEE nào và đạt tốc độ bao nhiêu?",
+                options: ["A. IEEE 802.3z, tốc độ 1000 Mbps", "B. IEEE 802.3u, tốc độ 100 Mbps", "C. IEEE 802.11g, tốc độ 54 Mbps", "D. IEEE 802.3ae, tốc độ 10 Gbps"],
+                correctAnswer: 0
+            },
+            {
+                question: "Một Switch Layer 2 có 24 cổng kết nối tiêu chuẩn. Thiết bị này tạo ra bao nhiêu miền xung đột (Collision Domains) và bao nhiêu miền quảng bá (Broadcast Domains)?",
+                options: ["A. 1 miền xung đột, 24 miền quảng bá", "B. 24 miền xung đột, 1 miền quảng bá", "C. 24 miền xung đột, 24 miền quảng bá", "D. 1 miền xung đột, 1 miền quảng bá"],
+                correctAnswer: 1
+            },
+            {
+                question: "Địa chỉ IPv4 tiêu chuẩn có độ dài bao nhiêu bit và được chia thành bao nhiêu byte?",
+                options: ["A. 32 bit, chia thành 4 byte", "B. 48 bit, chia thành 6 byte", "C. 64 bit, chia thành 8 byte", "D. 128 bit, chia thành 16 byte"],
+                correctAnswer: 0
+            },
+            {
+                question: "Địa chỉ IP nào sau đây thuộc về Lớp A (Class A) dựa trên quy ước phân lớp địa chỉ IPv4?",
+                options: ["A. 10.20.30.40", "B. 130.50.6.7", "C. 192.168.1.1", "D. 224.0.0.1"],
+                correctAnswer: 0
+            },
+            {
+                question: "Địa chỉ IP nào dưới đây được xác định thuộc dải địa chỉ Lớp B?",
+                options: ["A. 10.100.200.1", "B. 172.16.5.99", "C. 192.11.22.33", "D. 200.200.200.200"],
+                correctAnswer: 1
+            },
+            {
+                question: "Dải địa chỉ IP Private nào sau đây được quy định cụ thể cho mạng Lớp C để sử dụng trong nội bộ doanh nghiệp?",
+                options: ["A. 10.0.0.0 đến 10.255.255.255", "B. 172.16.0.0 đến 172.31.255.255", "C. 192.168.0.0 đến 192.168.255.255", "D. 169.254.0.0 đến 169.254.255.255"],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi bạn thực hiện lệnh ping 127.0.0.1, bạn đang kiểm tra thành phần nào trên máy tính?",
+                options: ["A. Kiểm tra kết nối đến máy chủ Router.", "B. Kiểm tra xem card mạng vật lý có cắm dây hay không.", "C. Kiểm tra xem chồng giao thức TCP/IP (Loopback) nội bộ đã được cài đặt đúng và hoạt động ổn định chưa.", "D. Kiểm tra đường truyền kết nối Internet ra ngoài."],
+                correctAnswer: 2
+            },
+            {
+                question: "Subnet Mask mặc định của một địa chỉ IP thuộc Lớp B (Class B) là mặt nạ mạng nào?",
+                options: ["A. 255.0.0.0", "B. 255.255.0.0", "C. 255.255.255.0", "D. 255.255.255.240"],
+                correctAnswer: 1
+            },
+            {
+                question: "Ký hiệu tiền tố mạng (Prefix) /24 tương đương với giá trị mặt nạ mạng con (Subnet Mask) nào dưới đây?",
+                options: ["A. 255.255.0.0", "B. 255.255.255.0", "C. 255.255.255.128", "D. 255.255.255.192"],
+                correctAnswer: 1
+            },
+            {
+                question: "Cho máy tính cấu hình địa chỉ IP 192.168.10.45 với Subnet Mask là /24. Địa chỉ định danh mạng (Network ID) của máy tính này là gì?",
+                options: ["A. 192.168.0.0", "B. 192.168.10.0", "C. 192.168.10.255", "D. 192.168.10.1"],
+                correctAnswer: 1
+            },
+            {
+                question: "Cho địa chỉ IP 192.168.10.45/24. Địa chỉ quảng bá (Broadcast ID) của phân đoạn mạng mạng LAN này là gì?",
+                options: ["A. 192.168.10.0", "B. 192.168.10.255", "C. 192.168.255.255", "D. 192.168.10.254"],
+                correctAnswer: 1
+            },
+            {
+                question: "Tại sao địa chỉ IP dạng 192.168.1.0/24 không được gán cho card mạng của máy trạm (Host) trong thực tế?",
+                options: ["A. Vì đây là địa chỉ lớp D dùng cho truyền đa hướng.", "B. Vì đây là địa chỉ đại diện cho toàn bộ mạng mạng LAN đó (Network Address).", "C. Vì hệ điều hành Windows cấm sử dụng số 0 ở cuối.", "D. Vì đây là địa chỉ Router cục bộ."],
+                correctAnswer: 1
+            },
+            {
+                question: "Với mặt nạ mạng con được cấu hình là /26, một mạng con (Subnet) có thể phân bổ tối đa bao nhiêu địa chỉ IP khả dụng cho các máy trạm?",
+                options: ["A. 30 địa chỉ", "B. 32 địa chỉ", "C. 62 địa chỉ", "D. 64 địa chỉ"],
+                correctAnswer: 2
+            },
+            {
+                question: "Một người quản trị cần chia mạng lớp C thành 4 mạng con bằng nhau. Mặt nạ mạng con (Subnet Mask) dạng số nào sau đây đáp ứng đúng yêu cầu?",
+                options: ["A. 255.255.255.128", "B. 255.255.255.192", "C. 255.255.255.224", "D. 255.255.255.240"],
+                correctAnswer: 1
+            },
+            {
+                question: "Xác định địa chỉ mạng (Network ID) của địa chỉ Host cụ thể sau: 172.16.10.35/28.",
+                options: ["A. 172.16.10.0", "B. 172.16.10.16", "C. 172.16.10.32", "D. 172.16.10.48"],
+                correctAnswer: 2
+            },
+            {
+                question: "Cho dải mạng lớn 10.0.0.0/8. Nếu mượn thêm 8 bit để thực hiện chia mạng con, mặt nạ mạng mới dạng Prefix sẽ là bao nhiêu?",
+                options: ["A. /12", "B. /16", "C. /24", "D. /32"],
+                correctAnswer: 1
+            },
+            {
+                question: "Địa chỉ thế hệ mới IPv6 được thiết kế với độ dài bao nhiêu bit để thay thế không gian địa chỉ IPv4 đang cạn kiệt?",
+                options: ["A. 48 bit", "B. 64 bit", "C. 128 bit", "D. 256 bit"],
+                correctAnswer: 2
+            },
+            {
+                question: "Địa chỉ IPv6 nào sau đây đóng vai trò là địa chỉ Loopback tương đương với địa chỉ 127.0.0.1 trong IPv4?",
+                options: ["A. ::", "B. ::1", "C. FE80::1", "D. 2001::"],
+                correctAnswer: 1
+            },
+            {
+                question: "Đặc điểm nổi bật và quan trọng nhất của giao thức TCP ở tầng Vận chuyển là gì?",
+                options: ["A. Tốc độ truyền tin rất nhanh, không cần kiểm tra lỗi.", "B. Hoạt động theo cơ chế hướng kết nối (Connection-oriented) và đảm bảo truyền dữ liệu tin cậy.", "C. Sử dụng cơ chế truyền quảng bá (Broadcast).", "D. Không cần thực hiện bắt tay thiết lập phiên."],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức UDP phù hợp nhất để áp dụng cho loại ứng dụng mạng nào sau đây trong thực tế?",
+                options: ["A. Tải tệp tin dung lượng lớn qua giao thức FTP.", "B. Truy cập quản trị cơ sở dữ liệu.", "C. Truyền video trực tuyến (Video Streaming) và cuộc gọi thoại VoIP.", "D. Gửi nhận thư điện tử SMTP."],
+                correctAnswer: 2
+            },
+            {
+                question: "Tiến trình bắt tay 3 bước (3-way handshake) của giao thức TCP diễn ra với trình tự các cờ (Flags) điều khiển nào?",
+                options: ["A. SYN -> ACK -> SYN-ACK", "B. SYN -> SYN-ACK -> ACK", "C. FIN -> ACK -> FIN-ACK", "D. RST -> SYN -> ACK"],
+                correctAnswer: 1
+            },
+            {
+                question: "Định tuyến tĩnh (Static Routing) có đặc điểm thực tế nào sau đây?",
+                options: ["A. Router tự động trao đổi bảng định tuyến với nhau qua giao thức RIP.", "B. Quản trị viên hệ thống phải cấu hình các tuyến đường đi thủ công trên từng Router.", "C. Tự động tìm đường đi vòng tránh khi một liên kết mạng bị đứt.", "D. Tiêu tốn nhiều tài nguyên xử lý của CPU Router hơn định tuyến động."],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức nào sau đây thuộc nhóm giao thức định tuyến động (Dynamic Routing) hoạt động theo thuật toán Link-State?",
+                options: ["A. RIPv2", "B. OSPF", "C. BGP", "D. Static Route"],
+                correctAnswer: 1
+            },
+            {
+                question: "Chức năng chính và cốt lõi của giao thức ARP (Address Resolution Protocol) khi hoạt động trong mạng mạng LAN là gì?",
+                options: ["A. Dịch tên miền thành địa chỉ IP nguồn.", "B. Ánh xạ/Tìm kiếm địa chỉ MAC của thiết bị dựa trên địa chỉ IP đã biết.", "C. Định tuyến gói tin qua môi trường Internet.", "D. Cấp địa chỉ mạng cho máy ảo VMware."],
+                correctAnswer: 1
+            },
+            {
+                question: "Bạn gõ câu lệnh nào trong CMD trên Windows để kiểm tra toàn bộ bảng lưu cache ánh xạ IP-MAC hiện hành của máy?",
+                options: ["A. arp -a", "B. arp -d", "C. netstat -a", "D. ipconfig/displaydns"],
+                correctAnswer: 0
+            },
+            {
+                question: "Công cụ ping và tracert sử dụng thông điệp của giao thức nào tại tầng mạng để kiểm tra lỗi và đo lường khoảng cách?",
+                options: ["A. IGMP", "B. ICMP", "C. ARP", "D. DNS"],
+                correctAnswer: 1
+            },
+            {
+                question: "Trong lệnh tracert, trường thông tin nào trong tiêu đề gói tin IP được tăng dần từ 1 để ép các Router trung gian gửi gói tin báo lỗi về?",
+                options: ["A. Checksum", "B. Type of Service", "C. TTL (Time to Live)", "D. Fragment Offset"],
+                correctAnswer: 2
+            },
+            {
+                question: "Thành phần 'Default Gateway' được cấu hình trên máy trạm thực tế trỏ đến địa chỉ của thiết bị nào?",
+                options: ["A. Địa chỉ IP của máy chủ DNS nội bộ.", "B. Địa chỉ IP mặt trong mạng mạng LAN của Router kết nối mạng đó ra bên ngoài.", "C. Địa chỉ MAC của Switch trung tâm.", "D. Địa chỉ trang chủ của nhà cung cấp dịch vụ Internet (ISP)."],
+                correctAnswer: 1
+            },
+            {
+                question: "Nếu một máy trạm trong mạng không được cấu hình thông số Default Gateway thì nó sẽ bị hạn chế giao tiếp như thế nào?",
+                options: ["A. Hoàn toàn không thể liên lạc với bất kỳ máy nào, kể cả máy cùng dải mạng.", "B. Chỉ có thể truyền dữ liệu và liên lạc với các máy tính nằm cùng một phân đoạn mạng con (mạng nội bộ mạng LAN).", "C. Vẫn truy cập được Internet bình thường nhưng tốc độ chậm.", "D. Chỉ không vào được các trang web bảo mật HTTPS."],
+                correctAnswer: 1
+            },
+            {
+                question: "Khi khởi động, một máy tính cấu hình nhận IP tự động nhưng không kết nối được tới DHCP Server. Máy tính tự gán một địa chỉ dạng 169.254.x.x. Cơ chế này gọi là gì?",
+                options: ["A. DHCP Relay Agent", "B. APIPA (Automatic Private IP Addressing)", "C. DNS Caching", "D. Static Mapping"],
+                correctAnswer: 1
+            },
+            {
+                question: "Công nghệ NAT (Network Address Translation) cấu hình trên Router biên có tác dụng gì trong mạng thực tế?",
+                options: ["A. Đồng bộ hóa thời gian giữa các máy chủ.", "B. Chuyển đổi qua lại giữa các địa chỉ IP Private trong mạng nội bộ và địa chỉ IP Public ra ngoài Internet.", "C. Mã hóa tệp tin khi truyền qua mạng không dây.", "D. Chặn mã độc xâm nhập qua cổng USB."],
+                correctAnswer: 1
+            },
+            {
+                question: "Dịch vụ cấp phát cấu hình IP động DHCP hoạt động trên tầng Ứng dụng, sử dụng giao thức truyền vận UDP qua cặp cổng dịch vụ (Port) nào?",
+                options: ["A. Port 53 và 54", "B. Port 67 (Server) và Port 68 (Client)", "C. Port 80 và 443", "D. Port 20 và 21"],
+                correctAnswer: 1
+            },
+            {
+                question: "Tiến trình xin cấp phát địa chỉ IP tự động giữa DHCP Client và DHCP Server diễn ra theo trình tự 4 bước (DORA) nào?",
+                options: ["A. Request -> Discover -> Offer -> Acknowledgment", "B. Discover -> Offer -> Request -> Acknowledgment", "C. Discover -> Request -> Offer -> Acknowledgment", "D. Offer -> Discover -> Request -> Acknowledgment"],
+                correctAnswer: 1
+            },
+            {
+                question: "Chức năng hệ thống của dịch vụ tên miền DNS (Domain Name System) trong hạ tầng mạng là gì?",
+                options: ["A. Cấp phát địa chỉ IP động cho các máy trạm.", "B. Phân giải tên miền dễ nhớ (như huflit.edu.vn) thành địa chỉ IP logic để máy tính kết nối và ngược lại.", "C. Quản lý bản quyền hệ điều hành.", "D. Thiết lập đường truyền VPN bảo mật."],
+                correctAnswer: 1
+            },
+            {
+                question: "Dịch vụ phân giải tên miền DNS sử dụng cổng dịch vụ (Port) tiêu chuẩn nào sau đây?",
+                options: ["A. Port 23", "B. Port 25", "C. Port 53", "D. Port 110"],
+                correctAnswer: 2
+            },
+            {
+                question: "Bản ghi (Record) nào trong cấu hình DNS Server chịu trách nhiệm ánh xạ một Tên miền trực tiếp sang địa chỉ IPv4 của máy chủ?",
+                options: ["A. Record A", "B. Record AAAA", "C. Record MX", "D. Record CNAME"],
+                correctAnswer: 0
+            },
+            {
+                question: "Khi cấu hình hệ thống Mail Server, bản ghi DNS nào bắt buộc phải khai báo để định vị máy chủ nhận thư điện tử của tên miền?",
+                options: ["A. Record A", "B. Record MX (Mail Exchanger)", "C. Record NS", "D. Record PTR"],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức truyền tải siêu văn bản không bảo mật HTTP sử dụng số hiệu cổng mặc định nào để giao tiếp?",
+                options: ["A. Port 21", "B. Port 23", "C. Port 80", "D. Port 443"],
+                correctAnswer: 2
+            },
+            {
+                question: "Giao thức HTTPS sử dụng thuật toán mã hóa để bảo mật luồng dữ liệu web chạy qua cổng dịch vụ mặc định nào?",
+                options: ["A. Port 80", "B. Port 443", "C. Port 8080", "D. Port 8443"],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức truyền tải tệp tin FTP sử dụng hai cổng dịch vụ mặc định là bao nhiêu để truyền dữ liệu và điều khiển?",
+                options: ["A. Port 20 và Port 21", "B. Port 22 và Port 23", "C. Port 25 và Port 110", "D. Port 143 và Port 993"],
+                correctAnswer: 0
+            },
+            {
+                question: "Giá trị trường TTL (Time to Live) trong phần đầu gói tin IPv4 có ý nghĩa thực tế nào?",
+                options: ["A. Đo tổng thời gian tính bằng giây từ lúc gói tin được phát đi.", "B. Giới hạn số lượng Router tối đa (số chặng - hops) mà gói tin có thể đi qua nhằm ngăn ngừa hiện tượng lặp vòng vô hạn trên mạng.", "C. Xác định băng thông ưu tiên cho gói tin dữ liệu.", "D. Mã hóa thời gian tạo gói tin."],
+                correctAnswer: 1
+            },
+            {
+                question: "Điều gì xảy ra khi một gói tin IP đi qua một Router và giá trị trường TTL bị giảm xuống bằng 0?",
+                options: ["A. Router tự động tăng TTL lên lại 64.", "B. Router hủy bỏ gói tin đó và gửi một thông điệp ICMP báo lỗi 'Time Exceeded' về cho máy nguồn.", "C. Gói tin được chuyển tiếp sang mạng kế tiếp bằng cơ chế quảng bá.", "D. Router lưu gói tin vào hàng đợi vĩnh viễn."],
+                correctAnswer: 1
+            },
+            {
+                question: "Bản ghi PTR (Pointer Record) trong DNS Server được cấu hình và sử dụng cho mục đích gì?",
+                options: ["A. Phân giải thuận từ tên miền ra địa chỉ IP.", "B. Phân giải ngược từ địa chỉ IP ra tên miền (Reverse DNS).", "C. Tạo tên miền bí danh.", "D. Định tuyến luồng thư điện tử."],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức mạng TCP sử dụng cơ chế nào để điều khiển luồng dữ liệu, ngăn không cho bên phát làm tràn ngập bộ đệm của bên nhận?",
+                options: ["A. Cửa sổ trượt (Sliding Window)", "B. Định thời gian ngẫu nhiên", "C. Gửi thông điệp ICMP Source Quench", "D. Chặn cổng vật lý"],
+                correctAnswer: 0
+            },
+            {
+                question: "Thành phần nào sau đây trong kiến trúc bộ giao thức TCP/IP chịu trách nhiệm xác định tiến trình (Process) cụ thể hoặc ứng dụng đích trên một máy tính?",
+                options: ["A. Địa chỉ IP", "B. Số hiệu cổng (Port Number)", "C. Địa chỉ MAC", "D. Mã loại giao thức (Protocol ID)"],
+                correctAnswer: 1
+            },
+            {
+                question: "Dải số hiệu cổng dịch vụ từ 0 đến 1023 trong mạng máy tính được phân loại thuộc nhóm nào?",
+                options: ["A. Well-known Ports (Các cổng phổ biến được đăng ký tiêu chuẩn)", "B. Registered Ports (Các cổng đã đăng ký riêng)", "C. Dynamic / Private Ports (Các cổng động dùng tạm thời)", "D. Cổng quản trị dự phòng"],
+                correctAnswer: 0
+            },
+            {
+                question: "Lệnh CMD nào hiển thị danh sách các địa chỉ IP mạng nội bộ trực quan kèm theo tên máy tính tương ứng trong mạng Windows?",
+                options: ["A. net view", "B. hostname", "C. nbtstat -n", "D. ipconfig /all"],
+                correctAnswer: 0
+            },
+            {
+                question: "Trong giao diện phần mềm phân tích gói tin Wireshark, từ khóa bộ lọc nào hiển thị duy nhất các gói tin liên quan đến dịch vụ phân giải tên miền?",
+                options: ["A. ip.dns", "B. dns", "C. udp.port == 53", "D. Cả B và C đều đúng"],
+                correctAnswer: 3
+            },
+            {
+                question: "Khi bắt gói tin quá trình thiết lập kết nối TCP, gói tin đầu tiên do Client phát đi sẽ có cờ (Flag) nào được thiết lập giá trị bằng 1?",
+                options: ["A. [ACK]", "B. [SYN]", "C. [FIN]", "D. [RST]"],
+                correctAnswer: 1
+            },
+            {
+                question: "Bạn cần lọc gói tin trong Wireshark để chỉ xem các lưu lượng mạng đi hoặc đến từ địa chỉ IP máy trạm 192.168.1.100, cú pháp lọc đúng là gì?",
+                options: ["A. ip.src==192.168.1.100", "B. ip.dst==192.168.1.100", "C. ip.addr==192.168.1.100", "D. ip_address==192.168.1.100"],
+                correctAnswer: 2
+            },
+            {
+                question: "Để kiểm tra xem người dùng mạng nội bộ đang thực hiện yêu cầu tải dữ liệu gì từ Web Server bằng giao thức HTTP, cú pháp lọc cụ thể nào được gõ vào Wireshark?",
+                options: ["A. http", "B. http.request.method == \"GET\"", "C. http.response.code == 200", "D. tcp.port == 80"],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức nào hoạt động ở tầng Ứng dụng chịu trách nhiệm đẩy thư điện tử đi (gửi thư) từ Client lên Mail Server hoặc giữa các Mail Server với nhau?",
+                options: ["A. POP3", "B. IMAP", "C. SMTP", "D. HTTP"],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi cấu hình Outlook Mail, nếu chọn giao thức POP3 (Port 110) để tải thư từ máy chủ về máy trạm cục bộ thì mặc định điều gì xảy ra?",
+                options: ["A. Thư điện tử vẫn được đồng bộ liên tục trên mọi thiết bị di động khác.", "B. Thư điện tử sẽ được tải về lưu trữ trên máy trạm cục bộ và bị xóa khỏi hộp thư gốc trên Mail Server.", "C. Thư điện tử không thể đính kèm tệp tin dung lượng lớn.", "D. Thư điện tử sẽ được tự động mã hóa AES."],
+                correctAnswer: 1
+            },
+            {
+                question: "Giao thức ứng dụng quản lý thư điện tử nào cho phép người dùng đọc, tổ chức thư vào các thư mục trực tiếp ngay trên Mail Server mà không cần tải hết về máy?",
+                options: ["A. POP3", "B. SMTP", "C. IMAP (Internet Message Access Protocol)", "D. FTP"],
+                correctAnswer: 2
+            },
+            {
+                question: "Lệnh CMD nâng cao nào dùng để thực hiện truy vấn thủ công và kiểm tra phản hồi từ các bản ghi dịch vụ trên hệ thống DNS Server?",
+                options: ["A. ping", "B. nslookup", "C. pathping", "D. netstat"],
+                correctAnswer: 1
+            },
+            {
+                question: "Máy tính Windows của bạn không thể truy cập vào một trang web do trang này vừa đổi IP lưu trữ. Câu lệnh CMD nào nhanh nhất để xóa sạch bộ đệm DNS lưu sai trên máy?",
+                options: ["A. ipconfig /release", "B. ipconfig /renew", "C. ipconfig /flushdns", "D. ipconfig /displaydns"],
+                correctAnswer: 2
+            },
+            {
+                question: "Bạn nghi ngờ máy tính đang bị một phần mềm gián điệp kết nối lén ra ngoài Internet qua một Port lạ. Lệnh CMD nào giúp liệt kê toàn bộ các cổng mạng đang mở và trạng thái kết nối hiện hành?",
+                options: ["A. arp -a", "B. netstat -an", "C. route print", "D. ipconfig"],
+                correctAnswer: 1
+            },
+            {
+                question: "Khi quản trị hệ thống mạng Windows Server, dịch vụ thư mục nào quản lý tập trung toàn bộ tài khoản người dùng, máy tính và áp dụng Chính sách nhóm (Group Policy Objects - GPO)?",
+                options: ["A. Active Directory Domain Services (AD DS)", "B. DHCP Server", "C. Web Server IIS", "D. File Server Resource Manager"],
+                correctAnswer: 0
+            },
+            {
+                question: "Phân tích gói tin DHCP bằng phần mềm Wireshark cho thấy, gói tin khởi tạo đầu tiên mang tên DHCP Discover được gửi đi từ Client dưới dạng thức truyền tin nào?",
+                options: ["A. Unicast (Đơn hướng)", "B. Multicast (Đa hướng)", "C. Broadcast (Quảng bá toàn mạng nội bộ)", "D. Anycast"],
+                correctAnswer: 2
+            },
+            {
+                question: "Giao thức quản lý và điều khiển từ xa giao diện dòng lệnh (CLI) nào chạy trên Port 22, cung cấp cơ chế mã hóa toàn bộ phiên truyền dữ liệu thay thế cho Telnet?",
+                options: ["A. FTP", "B. SSH (Secure Shell)", "C. RDP", "D. TFTP"],
+                correctAnswer: 1
+            },
+            {
+                question: "Trong Wireshark, một gói tin HTTP chứa mã trạng thái phản hồi phản ánh lỗi kết nối từ phía Máy chủ (Server Error) thường bắt đầu bằng số mấy?",
+                options: ["A. 2xx (ví dụ 200)", "B. 3xx (ví dụ 301)", "C. 4xx (ví dụ 404)", "D. 5xx (ví dụ 500)"],
+                correctAnswer: 3
+            },
+            {
+                question: "Để kiểm tra xem một máy chủ dịch vụ Web ở xa có đang mở và lắng nghe kết nối tại cổng dịch vụ 80 hay không, ta có thể dùng lệnh kiểm tra nhanh nào?",
+                options: ["A. ping -t [IP_Server]", "B. tnc [IP_Server] -port 80 (trên PowerShell) hoặc sử dụng công cụ Telnet đến Port 80", "C. arp -g", "D. tracert -h 80 [IP_Server]"],
+                correctAnswer: 1
+            },
+            {
+                question: "Thiết bị phần cứng hoặc ứng dụng phần mềm nào đóng vai trò kiểm soát luồng thông tin ra vào giữa mạng nội bộ bảo mật và mạng Internet dựa trên các quy tắc (Rules) định sẵn?",
+                options: ["A. Router", "B. Firewall (Tường lửa)", "C. Switch Layer 2", "D. Hub"],
+                correctAnswer: 1
+            },
+            {
+                question: "Mục đích chính của một cuộc tấn công mạng theo hình thức Từ chối dịch vụ phát tán (DDoS) là gì?",
+                options: ["A. Đột nhập vào máy chủ để lấy cắp cơ sở dữ liệu mật.", "B. Gửi một lượng lớn lưu lượng truy cập ảo làm quá tải tài nguyên hệ thống, khiến người dùng hợp pháp không thể truy cập dịch vụ.", "C. Thay đổi giao diện trang chủ website.", "D. Nghe lén mật khẩu truyền qua mạng LAN."],
+                correctAnswer: 1
+            },
+            {
+                question: "Hình thức tấn công mạng nào lừa gạt người dùng bằng cách giả mạo email hoặc giao diện trang web của ngân hàng, tổ chức uy tín để chiếm đoạt tài khoản mật khẩu?",
+                options: ["A. Phishing (Tấn công giả mạo)", "B. Man-in-the-middle", "C. Spoofing", "D. Ransomware"],
+                correctAnswer: 0
+            },
+            {
+                question: "Loại phần mềm độc hại (Malware) nào có khả năng tự động nhân bản độc lập và chủ động lây lan rất nhanh qua môi trường mạng từ máy này sang máy khác mà không cần đính kèm vào một tệp tin hay sự can thiệp của con người?",
+                options: ["A. Virus máy tính", "B. Worm (Sâu máy tính)", "C. Trojan Horse", "D. Keylogger"],
+                correctAnswer: 1
+            },
+            {
+                question: "Công nghệ nào tạo ra một 'đường ống mã hóa an toàn' (Secure Tunnel) giúp nhân viên kết nối từ xa qua Internet về mạng nội bộ của công ty bảo mật tối đa?",
+                options: ["A. NAT", "B. VLAN", "C. VPN (Virtual Private Network)", "D. Proxy Server"],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi thiết lập một máy ảo (Virtual Machine) trên phần mềm VMware Workstation, chế độ card mạng nào (Network Connection) gán cho máy ảo một IP riêng độc lập, cùng dải mạng và có thể giao tiếp trực tiếp với các máy vật lý bên ngoài như một máy tính thật?",
+                options: ["A. Bridged Customer Network", "B. NAT (Network Address Translation)", "C. Host-Only Private Network", "D. LAN Segment"],
+                correctAnswer: 0
+            },
+            {
+                question: "Chế độ cấu hình mạng nào trong phần mềm ảo hóa VMware Workstation cách ly hoàn toàn hệ thống máy ảo khỏi mạng vật lý bên ngoài, chỉ cho phép các máy ảo giao tiếp nội bộ với nhau và với máy Host vật lý?",
+                options: ["A. Bridged", "B. NAT", "C. Host-Only", "D. Custom VMnet0"],
+                correctAnswer: 2
+            },
+            {
+                question: "Khi chọn chế độ mạng NAT trong cấu hình máy ảo VMware Workstation, máy ảo sẽ ra mạng Internet bằng cách nào?",
+                options: ["A. Dùng chung địa chỉ IP vật lý của máy Host để đi ra ngoài thông qua cơ chế chuyển đổi NAT tích hợp của VMware.", "B. Tự xin IP trực tiếp từ Router ngoài phòng lab.", "C. Không thể ra được Internet trong bất kỳ tình huống nào.", "D. Bắt buộc phải qua kết nối cáp chéo."],
+                correctAnswer: 0
+            },
+            {
+                question: "Trên hệ thống Windows Server, quyền chia sẻ thư mục qua mạng (Share Permissions) chỉ có tác dụng bảo mật khi người dùng thực hiện hành vi nào?",
+                options: ["A. Ngồi đăng nhập trực tiếp tại bàn phím máy chủ.", "B. Truy cập vào thư mục đó từ xa thông qua đường dẫn mạng mạng LAN (như \\\\Server\\Data).", "C. Sao chép dữ liệu vào ổ đĩa USB.", "D. Định dạng lại phân vùng ổ cứng."],
+                correctAnswer: 1
+            },
+            {
+                question: "Hệ thống tập tin (File System) nào tiêu chuẩn trên Windows hỗ trợ tính năng thiết lập quyền bảo mật chi tiết (NTFS Permissions) trên từng tập tin và thư mục cục bộ?",
+                options: ["A. FAT", "B. FAT32", "C. NTFS", "D. exFAT"],
+                correctAnswer: 2
+            }
+        ];
+
+       let currentQuestions = [];
+        let userAnswers = [];
+        let isSubmitted = false;
+
+        const quizContainer = document.getElementById("quiz-container");
+        const shuffleToggle = document.getElementById("shuffleToggle");
+
+        // Thuật toán xáo trộn mảng
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Xử lý xáo trộn riêng các đáp án bên trong câu hỏi
+        function processQuestions(questionsData, isShuffle) {
+            if (!isShuffle) return [...questionsData];
+
+            let processed = questionsData.map(q => {
+                // Bước 1: Tách đáp án ra khỏi tiền tố A, B, C, D và đánh dấu đáp án đúng
+                let mappedOptions = q.options.map((text, index) => {
+                    return {
+                        text: text.replace(/^[A-D]\.\s*/, ''), // Xóa chữ A. B. C. D. ở đầu
+                        isCorrect: index === q.correctAnswer
+                    };
+                });
+
+                // Bước 2: Xáo trộn các đáp án
+                mappedOptions = shuffleArray(mappedOptions);
+
+                // Bước 3: Tìm lại vị trí (index) của đáp án đúng sau khi đã xáo trộn
+                let newCorrectIndex = mappedOptions.findIndex(opt => opt.isCorrect);
+
+                // Bước 4: Gắn lại tiền tố A, B, C, D mới theo thứ tự đã xáo trộn
+                let finalOptions = mappedOptions.map((opt, index) => {
+                    const prefix = String.fromCharCode(65 + index); // Tạo chữ A, B, C, D dựa vào index
+                    return prefix + ". " + opt.text;
+                });
+
+                return {
+                    question: q.question,
+                    options: finalOptions,
+                    correctAnswer: newCorrectIndex
+                };
+            });
+
+            // Xáo trộn luôn thứ tự các câu hỏi
+            return shuffleArray(processed);
+        }
+
+        // Khởi tạo bài kiểm tra
+        function initQuiz() {
+            isSubmitted = false;
+            document.getElementById("submit-btn").style.display = "inline-block";
+            document.getElementById("reset-btn").style.display = "none";
+            document.getElementById("result-text").style.display = "none";
+
+            // Áp dụng xáo trộn câu hỏi VÀ đáp án dựa vào nút bật/tắt
+            currentQuestions = processQuestions(rawQuestions, shuffleToggle.checked);
+
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            renderQuiz();
+            window.scrollTo(0, 0); // Cuộn lên đầu trang
+        }
+
+        // Hiển thị danh sách câu hỏi
+        function renderQuiz() {
+            quizContainer.innerHTML = ""; 
+            
+            currentQuestions.forEach((q, qIndex) => {
+                const card = document.createElement("div");
+                card.className = "question-card";
+                
+                const title = document.createElement("h3");
+                title.className = "question-title";
+                title.innerText = `Câu ${qIndex + 1}: ${q.question}`;
+                card.appendChild(title);
+
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+                
+                q.options.forEach((opt, optIndex) => {
+                    const optDiv = document.createElement("div");
+                    optDiv.className = "option-item";
+                    optDiv.innerText = opt;
+                    optDiv.id = `q${qIndex}_opt${optIndex}`;
+                    
+                    optDiv.onclick = () => selectOption(qIndex, optIndex);
+                    optionsDiv.appendChild(optDiv);
+                });
+
+                card.appendChild(optionsDiv);
+                quizContainer.appendChild(card);
+            });
+        }
+
+        // Xử lý chọn đáp án
+        function selectOption(qIndex, optIndex) {
+            if (isSubmitted) return; 
+
+            userAnswers[qIndex] = optIndex;
+
+            for (let i = 0; i < currentQuestions[qIndex].options.length; i++) {
+                document.getElementById(`q${qIndex}_opt${i}`).classList.remove("selected");
+            }
+            
+            document.getElementById(`q${qIndex}_opt${optIndex}`).classList.add("selected");
+        }
+
+        // Chấm điểm và hiển thị kết quả
+        function submitQuiz() {
+            const unanswered = userAnswers.filter(ans => ans === null).length;
+            if (unanswered > 0) {
+                const confirmSubmit = confirm(`Bạn còn ${unanswered} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài không?`);
+                if (!confirmSubmit) return;
+            }
+
+            isSubmitted = true;
+            let score = 0;
+
+            currentQuestions.forEach((q, qIndex) => {
+                const userAns = userAnswers[qIndex];
+                const correctAns = q.correctAnswer;
+
+                for (let i = 0; i < q.options.length; i++) {
+                    const optDiv = document.getElementById(`q${qIndex}_opt${i}`);
+                    optDiv.classList.add("disabled"); 
+
+                    if (i === correctAns) {
+                        optDiv.classList.add("correct");
+                    }
+                    if (i === userAns && userAns !== correctAns) {
+                        optDiv.classList.add("wrong");
+                    }
+                }
+
+                if (userAns === correctAns) {
+                    score++;
+                }
+            });
+
+            const resultText = document.getElementById("result-text");
+            resultText.innerText = `Đúng: ${score} / ${currentQuestions.length} câu`;
+            resultText.style.display = "inline-block";
+
+            document.getElementById("submit-btn").style.display = "none";
+            document.getElementById("reset-btn").style.display = "inline-block";
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Làm lại bài
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        // Lắng nghe sự kiện bật/tắt xáo trộn
+        shuffleToggle.addEventListener('change', () => {
+            if (!isSubmitted) {
+                initQuiz();
+            }
+        });
+
+        // Chạy ngay khi tải trang
+        initQuiz();
+    </script>
+</body>
+</html>
